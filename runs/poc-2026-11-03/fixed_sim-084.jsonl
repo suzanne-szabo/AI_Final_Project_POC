@@ -1,0 +1,22 @@
+{"config": {"high": 0.85, "low": 0.15, "max_probes": 10, "model_slip": 0.1, "prior": 0.2}, "kind": "header", "planted": ["A1_LINKED", "A2_REVERSED", "F5_RUNS_AFTER_RETURN"], "policy": "fixed", "student_id": "sim-084", "student_slip": 0.15}
+{"answer": "7 7", "classified": "7 7", "kind": "probe", "probe_id": "P01", "step": 1}
+{"entropy": 5.6083, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.2, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 1}
+{"answer": "10 10", "classified": "10 10", "kind": "probe", "probe_id": "P02", "step": 2}
+{"entropy": 5.5704, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 2}
+{"answer": "error", "classified": "error", "kind": "probe", "probe_id": "P03", "step": 3}
+{"entropy": 4.9547, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.9918, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 3}
+{"answer": "[9]", "classified": "[9]", "kind": "probe", "probe_id": "P04", "step": 4}
+{"entropy": 4.4683, "kind": "belief", "marginals": {"A1_LINKED": 0.9918, "A2_REVERSED": 0.9918, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 4}
+{"answer": "3 | none", "classified": "3 | none", "kind": "probe", "probe_id": "P05", "step": 5}
+{"entropy": 3.8508, "kind": "belief", "marginals": {"A1_LINKED": 0.9918, "A2_REVERSED": 0.9918, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 5}
+{"answer": "done", "classified": "done", "kind": "probe", "probe_id": "P06", "step": 6}
+{"entropy": 3.7554, "kind": "belief", "marginals": {"A1_LINKED": 0.9918, "A2_REVERSED": 0.9918, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0008, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 6}
+{"answer": "5", "classified": "5", "kind": "probe", "probe_id": "P07", "step": 7}
+{"entropy": 3.1379, "kind": "belief", "marginals": {"A1_LINKED": 0.9918, "A2_REVERSED": 0.9918, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0008, "F2_PARAM_LINKED": 0.0137, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 7}
+{"answer": "something unexpected", "classified": "<other>", "kind": "probe", "probe_id": "P08", "step": 8}
+{"entropy": 3.1379, "kind": "belief", "marginals": {"A1_LINKED": 0.9918, "A2_REVERSED": 0.9918, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0008, "F2_PARAM_LINKED": 0.0137, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 8}
+{"answer": "b | a", "classified": "b | a", "kind": "probe", "probe_id": "P09", "step": 9}
+{"entropy": 2.5204, "kind": "belief", "marginals": {"A1_LINKED": 0.9918, "A2_REVERSED": 0.9918, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0008, "F2_PARAM_LINKED": 0.0137, "F3_DEF_RUNS_BODY": 0.0137, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 9}
+{"answer": "error", "classified": "error", "kind": "probe", "probe_id": "P10", "step": 10}
+{"entropy": 1.9029, "kind": "belief", "marginals": {"A1_LINKED": 0.9918, "A2_REVERSED": 0.9918, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0008, "F2_PARAM_LINKED": 0.0137, "F3_DEF_RUNS_BODY": 0.0137, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 10}
+{"diagnosis": ["A1_LINKED", "A2_REVERSED"], "exact_match": false, "kind": "result", "probes_used": 10, "terminal": "BUDGET"}

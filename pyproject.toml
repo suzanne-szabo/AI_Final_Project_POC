@@ -1,0 +1,27 @@
+[project]
+name = "mental-model-agent"
+version = "0.1.0"
+description = "Infers a student's mental model of the Python function-call notional machine (AI final project / senior project PoC)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain-core>=1.0,<2",
+    "langchain-openai>=1.1,<2",
+    "langgraph>=1.1,<2",
+    "pydantic>=2.6,<3",
+    "python-dotenv>=1.2,<2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+    "whitebox: tests written after examining the implementation",
+    "live: talks to the real course services; skipped unless RUN_LIVE=1",
+]

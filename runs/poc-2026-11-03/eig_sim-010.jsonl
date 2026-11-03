@@ -1,0 +1,22 @@
+{"config": {"high": 0.85, "low": 0.15, "max_probes": 10, "model_slip": 0.1, "prior": 0.2}, "kind": "header", "planted": ["A1_LINKED", "A2_REVERSED", "A3_COPY_ON_ASSIGN", "F2_PARAM_LINKED"], "policy": "eig", "student_id": "sim-010", "student_slip": 0.15}
+{"answer": "7 7", "classified": "7 7", "kind": "probe", "probe_id": "P01", "step": 1}
+{"entropy": 5.6083, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.2, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 1}
+{"answer": "something unexpected", "classified": "<other>", "kind": "probe", "probe_id": "P03", "step": 2}
+{"entropy": 5.6083, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.2, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 2}
+{"answer": "10 10", "classified": "10 10", "kind": "probe", "probe_id": "P02", "step": 3}
+{"entropy": 5.5704, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 3}
+{"answer": "3 | none", "classified": "3 | none", "kind": "probe", "probe_id": "P05", "step": 4}
+{"entropy": 4.9529, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 4}
+{"answer": "6", "classified": "6", "kind": "probe", "probe_id": "P07", "step": 5}
+{"entropy": 4.915, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 5}
+{"answer": "start", "classified": "start", "kind": "probe", "probe_id": "P08", "step": 6}
+{"entropy": 4.2975, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.0137, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 6}
+{"answer": "error", "classified": "error", "kind": "probe", "probe_id": "P10", "step": 7}
+{"entropy": 3.68, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.0137, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 7}
+{"answer": "2", "classified": "2", "kind": "probe", "probe_id": "P12", "step": 8}
+{"entropy": 3.0625, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.0137, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.0137}, "step": 8}
+{"answer": "[]", "classified": "[]", "kind": "probe", "probe_id": "P14", "step": 9}
+{"entropy": 3.0246, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.8182, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.0137, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.0137}, "step": 9}
+{"answer": "6 6", "classified": "6 6", "kind": "probe", "probe_id": "P15", "step": 10}
+{"entropy": 2.4355, "kind": "belief", "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.8182, "A3_COPY_ON_ASSIGN": 0.8182, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.9878, "F3_DEF_RUNS_BODY": 0.0137, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.0137}, "step": 10}
+{"diagnosis": ["A1_LINKED", "A2_REVERSED", "A3_COPY_ON_ASSIGN", "F2_PARAM_LINKED"], "exact_match": true, "kind": "result", "probes_used": 10, "terminal": "BUDGET"}

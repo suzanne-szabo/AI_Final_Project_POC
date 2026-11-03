@@ -1,0 +1,22 @@
+{"config": {"high": 0.85, "low": 0.15, "max_probes": 10, "model_slip": 0.1, "prior": 0.2}, "kind": "header", "planted": ["A3_COPY_ON_ASSIGN", "F2_PARAM_LINKED", "F3_DEF_RUNS_BODY", "F5_RUNS_AFTER_RETURN"], "policy": "eig", "student_id": "sim-015", "student_slip": 0.15}
+{"answer": "7 5", "classified": "7 5", "kind": "probe", "probe_id": "P01", "step": 1}
+{"entropy": 4.5037, "kind": "belief", "marginals": {"A1_LINKED": 0.0113, "A2_REVERSED": 0.0113, "A3_COPY_ON_ASSIGN": 0.2, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 1}
+{"answer": "[1, 2]", "classified": "[1, 2]", "kind": "probe", "probe_id": "P03", "step": 2}
+{"entropy": 4.2606, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.2, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 2}
+{"answer": "3 | none", "classified": "3 | none", "kind": "probe", "probe_id": "P05", "step": 3}
+{"entropy": 3.6431, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.2, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 3}
+{"answer": "6", "classified": "6", "kind": "probe", "probe_id": "P07", "step": 4}
+{"entropy": 3.6052, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.2, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 4}
+{"answer": "hi | start", "classified": "hi | start", "kind": "probe", "probe_id": "P08", "step": 5}
+{"entropy": 3.5673, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.8182, "F4_LOCALS_OUTLIVE_CALL": 0.2, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 5}
+{"answer": "error", "classified": "error", "kind": "probe", "probe_id": "P10", "step": 6}
+{"entropy": 2.9498, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.8182, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.2}, "step": 6}
+{"answer": "after | 2", "classified": "after | 2", "kind": "probe", "probe_id": "P12", "step": 7}
+{"entropy": 2.9119, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.8182, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.8182}, "step": 7}
+{"answer": "non-pos", "classified": "non-pos", "kind": "probe", "probe_id": "P13", "step": 8}
+{"entropy": 2.3229, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.8182, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.9878}, "step": 8}
+{"answer": "something unexpected", "classified": "<other>", "kind": "probe", "probe_id": "P09", "step": 9}
+{"entropy": 2.3229, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.8182, "F3_DEF_RUNS_BODY": 0.8182, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.9878}, "step": 9}
+{"answer": "6 6", "classified": "6 6", "kind": "probe", "probe_id": "P15", "step": 10}
+{"entropy": 1.7339, "kind": "belief", "marginals": {"A1_LINKED": 0.0095, "A2_REVERSED": 0.0018, "A3_COPY_ON_ASSIGN": 0.8697, "F1_RETURN_IS_PRINT": 0.0137, "F2_PARAM_LINKED": 0.9878, "F3_DEF_RUNS_BODY": 0.8182, "F4_LOCALS_OUTLIVE_CALL": 0.0137, "F5_RUNS_AFTER_RETURN": 0.9878}, "step": 10}
+{"diagnosis": ["A3_COPY_ON_ASSIGN", "F2_PARAM_LINKED", "F3_DEF_RUNS_BODY", "F5_RUNS_AFTER_RETURN"], "exact_match": true, "kind": "result", "probes_used": 10, "terminal": "BUDGET"}
