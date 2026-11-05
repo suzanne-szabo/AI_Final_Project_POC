@@ -75,13 +75,37 @@ def fmt(value, pattern="{:.2f}"):
     return "n/a" if value is None else pattern.format(value)
 
 
+def write_summary(out: Path, summaries: dict) -> int:
+    calls = next(iter(summaries.values()))["calls"]
+    lines = [f"# Interpreter model comparison {out.name}", "",
+             f"{calls} calls per model (labeled explanations x repeats), temperature 0, forced tool call.", "",
+             "| Model | Valid calls | Exact match | Precision | Recall | False alarms on correct reasoning "
+             "| Median s | Max s | Cached share of prompt |",
+             "|---|---|---|---|---|---|---|---|---|"]
+    for name, s in summaries.items():
+        lines.append(f"| {name} | {s['valid_rate']:.2f} | {s['exact_match']:.2f} | {fmt(s['precision'])} | "
+                     f"{fmt(s['recall'])} | {s['false_alarms_on_correct']} of {s['correct_cases']} | "
+                     f"{s['median_seconds']:.1f} | {s['max_seconds']:.1f} | "
+                     f"{fmt(s['cached_share'], '{:.0%}') if s['cache_reported'] else 'not reported'} |")
+    (out / "summary.md").write_text("\n".join(lines) + "\n")
+    print("\n".join(lines) + f"\n\nWritten to {out}/")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--models", nargs="+", default=DEFAULT_MODELS)
     parser.add_argument("--cases", type=Path, default=ROOT / "data" / "explanations.jsonl")
     parser.add_argument("--repeat", type=int, default=1, help="run the case set this many times per model")
     parser.add_argument("--out", type=Path, default=None)
+    parser.add_argument("--summarize", type=Path, default=None,
+                        help="rebuild summary.md from an existing run folder without calling any model")
     args = parser.parse_args()
+    if args.summarize:
+        return write_summary(args.summarize, {
+            r[0]["model"]: summarize(r) for r in (
+                [json.loads(line) for line in f.read_text().splitlines() if line.strip()]
+                for f in sorted(args.summarize.glob("*.jsonl")))})
 
     cases = load_cases(args.cases)
     out = args.out or ROOT / "runs" / f"models-{datetime.now():%Y-%m-%d_%H%M}"
@@ -108,19 +132,7 @@ def main() -> int:
                 fh.write(json.dumps(record, sort_keys=True) + "\n")
         summaries[name] = summarize(records)
 
-    lines = [f"# Interpreter model comparison {out.name}", "",
-             f"{len(cases)} labeled explanations x {args.repeat} repeat(s), temperature 0, forced tool call.", "",
-             "| Model | Valid calls | Exact match | Precision | Recall | False alarms on correct reasoning "
-             "| Median s | Max s | Cached share of prompt |",
-             "|---|---|---|---|---|---|---|---|---|"]
-    for name, s in summaries.items():
-        lines.append(f"| {name} | {s['valid_rate']:.2f} | {s['exact_match']:.2f} | {fmt(s['precision'])} | "
-                     f"{fmt(s['recall'])} | {s['false_alarms_on_correct']} of {s['correct_cases'] * args.repeat} | "
-                     f"{s['median_seconds']:.1f} | {s['max_seconds']:.1f} | "
-                     f"{fmt(s['cached_share'], '{:.0%}') if s['cache_reported'] else 'not reported'} |")
-    (out / "summary.md").write_text("\n".join(lines) + "\n")
-    print("\n" + "\n".join(lines) + f"\n\nWritten to {out}/")
-    return 0
+    return write_summary(out, summaries)
 
 
 if __name__ == "__main__":

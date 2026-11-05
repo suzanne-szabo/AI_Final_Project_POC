@@ -15,7 +15,7 @@ constrained: they request typed tool calls, and the application owns the belief 
 |---|---|
 | Misconception catalog, 15 probes with answer keys | Draft for review (`mm_agent/catalog.py`, `mm_agent/probes.py`) |
 | Belief state, information-gain selection, simulated students | Built, tested |
-| Code-only proof of concept with JSONL traces | Built; run in `runs/poc-2026-11-03/` |
+| Code-only proof of concept with JSONL traces | Built; evidence run in `runs/poc-2026-11-04/` (reproducible on Python 3.10–3.13) |
 | Evidence interpreter (LLM) with cache-stable prompt | Built, tested offline with a scripted model |
 | Model comparison, Qwen vs Gemma | Script ready; must run on the Tailscale network |
 | ReAct interviewer (LangGraph) | Week ending Nov 12 |
@@ -31,8 +31,11 @@ uv run pytest               # offline; no key needed
 ## Proof of concept (no LLM)
 
 ```bash
-uv run python -m mm_agent.poc --students 100 --seed 7 --student-slip 0.15 --out runs/poc-2026-11-03
+uv run python -m mm_agent.poc --students 100 --seed 7 --student-slip 0.15 --out runs/poc-2026-11-04
 ```
+
+The proof of concept uses only the Python standard library, so `python3 -m mm_agent.poc ...` also works
+without `uv sync`. The same seed gives byte-identical traces on Python 3.10 through 3.13.
 
 Writes one JSONL trace per student and policy (`eig_*.jsonl`, `fixed_*.jsonl`) plus `summary.md`.
 Each trace has a `header` (planted profile, settings), alternating `probe` and `belief` records, and a

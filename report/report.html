@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mental-Model Inference Agent: Project Definition and Proof of Concept (Suzanne Szabo)</title>
+<meta name="author" content="Suzanne Szabo">
+<meta name="description" content="U0-HW-10 project definition and proof of concept: an agent that infers a student's mental model of the Python function-call notional machine before a lesson.">
+<style>
+  @page { size: Letter; margin: 0.85in 0.9in 0.85in 0.9in; }
+  html { font-size: 10.5pt; }
+  body { font-family: "DejaVu Serif", Georgia, serif; color: #111; line-height: 1.38; margin: 0; }
+  h1 { font-size: 18pt; margin: 0 0 4pt; line-height: 1.2; }
+  h2 { font-size: 13pt; margin: 16pt 0 5pt; border-bottom: 0.75pt solid #999; padding-bottom: 2pt; break-after: avoid; }
+  h3 { font-size: 11pt; margin: 11pt 0 3pt; break-after: avoid; }
+  p { margin: 0 0 6pt; }
+  ul, ol { margin: 0 0 6pt; padding-left: 18pt; }
+  li { margin-bottom: 2.5pt; }
+  .byline { margin: 0 0 10pt; color: #333; }
+  .byline p { margin: 0; }
+  code { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 8.8pt; }
+  pre { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 8.4pt; background: #f3f3f3; padding: 5pt 7pt; margin: 0 0 7pt; white-space: pre-wrap; break-inside: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 3pt 0 9pt; font-size: 9pt; break-inside: auto; }
+  caption { text-align: left; font-weight: bold; font-size: 9.5pt; padding-bottom: 3pt; caption-side: top; }
+  th, td { border: 0.5pt solid #888; padding: 2.5pt 4.5pt; vertical-align: top; text-align: left; }
+  thead th { background: #e6e6e6; }
+  tbody th { font-weight: normal; background: #f6f6f6; }
+  tr { break-inside: avoid; }
+  td.num, th.num { text-align: right; }
+  a { color: #0b4f9c; }
+  figure { margin: 4pt 0 10pt; break-inside: avoid; }
+  figcaption { font-size: 9.5pt; margin-top: 3pt; }
+  figcaption strong { font-weight: bold; }
+  .diagram { width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Mental-Model Inference Agent</h1>
+<div class="byline">
+<p>U0-HW-10: Agent Project Definition and Proof of Concept · Suzanne Szabo · Utah Tech University, AI, Fall 2026 · November 5, 2026</p>
+<p>Repository: <a href="https://github.com/suzanne-szabo/AI_Final_Project_POC">https://github.com/suzanne-szabo/AI_Final_Project_POC</a></p>
+<p>Submitted commit: <code>COMMIT_HASH</code></p>
+</div>
+</header>
+
+<section>
+<h2>1. Problem, User, Use and Target Outcome</h2>
+<p><strong>Problem.</strong> Students in an introductory programming course often hold a wrong picture of how the computer runs their code. A notional machine is the simplified model of the computer implied by a programming language (du Boulay, 1986; Sorva, 2013). When a student’s picture of it is not viable, later lessons build on a broken foundation: Ma et al. (2011) found that students who held viable models of assignment performed significantly better than those who did not. A tutor that adapts its lessons therefore needs to know, before the lesson starts, whether the student’s model is viable and, if not, exactly which part is wrong.</p>
+<p><strong>Intended user and client.</strong> The end users are introductory programming students. The client is the adaptive lesson system I am building for my senior project, which will read the agent’s diagnosis and choose what to teach. For this course project the agent is evaluated on its own.</p>
+<p><strong>Intended use.</strong> A short diagnostic session, about ten questions, before a lesson on Python functions. The agent asks the student to trace small programs, interprets the answers, and reports which parts of the function-call notional machine the student holds correctly and which are wrong.</p>
+<p><strong>Scope.</strong> One notional machine: Python function calls, with assignment as a prerequisite, because parameter passing in Python is assignment. Loops were considered and rejected (D1). The same structure is intended to extend to RISC-V calling conventions in the senior project.</p>
+<p><strong>Target outcome.</strong> A diagnosis profile that is accurate against a known ground truth: the probability of each misconception and the most likely set of misconceptions, reached in ten probes or fewer, more accurately than a fixed, non-adaptive quiz. Numerical targets are in Section 7.</p>
+</section>
+
+<section>
+<h2>2. Representation of a Mental Model</h2>
+<p>This is the central design decision, documented in full in <code>docs/mental-model-representation.md</code>. A student’s mental model is represented as <em>the correct notional machine with some of its rules replaced by known wrong versions</em>. Concretely, it is the subset of an eight-entry misconception catalog the student holds; the empty subset is a viable model. Each entry is a documented student misconception that replaces one rule of the notional machine (Table 1). Because a profile is a set of rules, it can be run: for any program, it predicts the output a student holding it would give. That prediction is what makes inference possible.</p>
+<p>The idea follows Brown and Burton’s BUGGY (1978), which modeled children’s subtraction errors as a correct procedure with specific buggy sub-skills substituted in, and later Bayesian diagnosis of such bugs (Lee &amp; Corter, 2011). I compared this representation with four alternatives: an LLM-written narrative, per-skill mastery scores, a concept map, and a learned latent vector. Only the catalog is measurable against ground truth, predicts the student’s exact answer, maps each entry to a teaching move, is interpretable, and needs no existing student data.</p>
+<table>
+<caption>Table 1. Misconception catalog (v1) and the notional-machine rule each replaces</caption>
+<thead><tr><th scope="col">Id</th><th scope="col">What the student believes</th><th scope="col">Rule replaced</th></tr></thead>
+<tbody>
+<tr><th scope="row"><code>A1_LINKED</code></th><td>After <code>b = a</code>, the two variables stay linked</td><td>Assignment binds a name to an object</td></tr>
+<tr><th scope="row"><code>A2_REVERSED</code></th><td><code>x = y</code> copies the value from left to right</td><td>Assignment binds a name to an object</td></tr>
+<tr><th scope="row"><code>A3_COPY_ON_ASSIGN</code></th><td><code>b = a</code> or passing a list makes an independent copy</td><td>Assignment binds a name to an object</td></tr>
+<tr><th scope="row"><code>F1_RETURN_IS_PRINT</code></th><td><code>return</code> and <code>print</code> are the same thing</td><td><code>return</code> hands a value back without displaying it</td></tr>
+<tr><th scope="row"><code>F2_PARAM_LINKED</code></th><td>Reassigning a parameter changes the caller’s variable</td><td>A parameter is a new local name</td></tr>
+<tr><th scope="row"><code>F3_DEF_RUNS_BODY</code></th><td>The body runs when <code>def</code> is reached</td><td><code>def</code> binds a name; the body runs only when called</td></tr>
+<tr><th scope="row"><code>F4_LOCALS_OUTLIVE_CALL</code></th><td>Local variables still exist after the call ends</td><td>Locals disappear when the frame returns</td></tr>
+<tr><th scope="row"><code>F5_RUNS_AFTER_RETURN</code></th><td>Execution continues past <code>return</code></td><td><code>return</code> ends the call immediately</td></tr>
+</tbody>
+</table>
+</section>
+
+<section>
+<h2>3. PEAS Analysis</h2>
+<table>
+<caption>Table 2. PEAS analysis</caption>
+<thead><tr><th scope="col">Element</th><th scope="col">Definition for this agent</th></tr></thead>
+<tbody>
+<tr><th scope="row">Performance measure</th><td>Diagnosis accuracy against the planted ground truth (exact profile match; precision and recall per misconception); calibration of the reported probabilities (Brier score); efficiency (probes used); cost and reliability of LLM calls (latency, share of prompt served from cache, valid tool-call rate); reproducibility of a seeded run.</td></tr>
+<tr><th scope="row">Environment</th><td>A student answering short Python tracing questions: simulated students with planted misconceptions in this project, real students in the senior project. Partially observable (the mental model is hidden), stochastic (students make careless slips), sequential, static during a session, discrete, single-agent.</td></tr>
+<tr><th scope="row">Actuators</th><td>The interviewer’s tools: <code>ask_probe</code> presents a tracing question from the bank (“what does this program print?”); <code>ask_explanation</code> asks the student to explain their reasoning (week 2); <code>submit_diagnosis</code> ends the session and outputs the diagnosis profile. <code>rank_probes</code> is an internal sensing action that reads the belief state.</td></tr>
+<tr><th scope="row">Sensors</th><td>The student’s answer text, matched against each probe’s answer keys; the student’s free-text explanation, labeled by the LLM evidence interpreter (week 2); a confidence rating (planned).</td></tr>
+</tbody>
+</table>
+</section>
+
+<section>
+<h2>4. Agent Design</h2>
+<p><strong>Decision boundary.</strong> The agent is a ReAct interviewer: an LLM that decides, one tool call per turn, which probe to ask next, whether to ask a follow-up question, and when it wants to stop. As in my HW-08 and HW-09 agents, the application owns all state. A controller validates every tool call against its policies before anything runs, and returns either the result or a rejection as an observation the model can correct. The application computes every likelihood, updates the belief state, and alone decides how a session ends. No LLM ever holds or edits the belief state.</p>
+<table>
+<caption>Table 3. The interviewer’s tools</caption>
+<thead><tr><th scope="col">Tool</th><th scope="col">What it does</th><th scope="col">Controller checks</th></tr></thead>
+<tbody>
+<tr><th scope="row"><code>rank_probes</code></th><td>Returns the unused probes ranked by expected information gain, with the current probability of each misconception</td><td>Read-only</td></tr>
+<tr><th scope="row"><code>ask_probe(probe_id)</code></th><td>Presents a tracing question; the observation is the student’s answer and the updated probabilities</td><td>The probe exists and has not been asked; the probe budget is not spent</td></tr>
+<tr><th scope="row"><code>ask_explanation()</code></th><td>Asks the student why they answered the last probe as they did; the interpreter’s labels update the belief (week 2)</td><td>Follows a probe; at most one per probe</td></tr>
+<tr><th scope="row"><code>submit_diagnosis()</code></th><td>Ends the session and writes the diagnosis profile and trace</td><td>Accepted only when every probability is ≤ 0.15 or ≥ 0.85, or the budget is spent</td></tr>
+</tbody>
+</table>
+<p>Further policies follow HW-09: unknown tools, invalid arguments and a second call in one turn are rejected; three consecutive rejections, a model error, or a reply with no tool call end the session with an error.</p>
+<ul>
+<li><strong>Percepts:</strong> the student’s answer, classified as one of the probe’s known answers or <code>OTHER</code>; catalog labels for the student’s explanation (week 2); and, for the interviewer, each tool’s observation: the probe ranking, the answer, and the updated probabilities.</li>
+<li><strong>Actions:</strong> the four tools in Table 3.</li>
+<li><strong>State:</strong> the belief state, a probability for each of the 2<sup>8</sup> = 256 possible profiles; the probes already asked; the step and rejection counts; an append-only trace.</li>
+<li><strong>Goal and terminal conditions:</strong> <code>DIAGNOSED</code> when an accepted <code>submit_diagnosis</code> follows a confident belief (every probability ≤ 0.15 or ≥ 0.85); <code>BUDGET</code> when ten probes have been used; <code>ERROR</code> with a kind (model error, no action, rejection limit).</li>
+<li><strong>In the proof of concept,</strong> a fixed rule stands in for the LLM interviewer: always ask the top-ranked probe, never ask for an explanation, and stop as soon as the belief is confident or the budget is spent (Figure 2). This rule is also the baseline the LLM interviewer must beat.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. AI Strategy</h2>
+<p><strong>Bayesian diagnosis over executable misconception models.</strong> The prior gives each misconception a 0.2 chance. The likelihood is a slip model: a student gives the answer their profile predicts with probability 0.9 and any other answer otherwise. The posterior is computed exactly over all 256 profiles after every answer, so no independence assumption is needed once evidence arrives.</p>
+<p><strong>Adaptive probe selection.</strong> The next probe is the one whose answer is expected to reduce the entropy of the belief state the most (expected information gain), as in computerized adaptive testing. A fixed-order quiz under the same budget is the baseline.</p>
+<p><strong>Constrained LLM roles.</strong> (1) An evidence interpreter maps a free-text explanation onto catalog labels through a forced <code>record_evidence</code> tool call; it is built and measured (Section 8.3) and is wired into the loop in week 2. (2) A LangGraph ReAct interviewer chooses among ranked probes and asks follow-up questions, with the same controller-policy design as HW-09. The interpreter is a separate stateless call so the agent never grades its own questioning. Every prompt follows the course’s prompt-cache rules: a constant system prompt and tool definition, variable content last, append-only history (D8).</p>
+<p><strong>Why it fits.</strong> The student’s model is hidden and the evidence is noisy, which is exactly the case for probabilistic inference over hidden state. An explicit belief state makes accuracy measurable and the agent’s confidence inspectable. The LLM is used where symbolic code cannot work: understanding students’ free-text reasoning.</p>
+<p><strong>Principal technical uncertainties.</strong></p>
+<ol>
+<li>Can the agent recover a student’s misconceptions from about ten noisy answers? The proof of concept addresses this in simulation (Section 8).</li>
+<li>Can an LLM reliably map vague, partly wrong student explanations onto the catalog? Measured on clean explanations (Section 8.3); vague explanations are the main open question.</li>
+<li>Does an LLM interviewer choose probes better than the information-gain rule? Planned comparison (Section 7).</li>
+</ol>
+</section>
+
+<section>
+<h2>6. System Diagram</h2>
+<figure>
+<svg class="diagram" viewBox="0 0 680 575" role="img" aria-labelledby="full-title full-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="full-title">Full architecture of the mental-model inference agent</title>
+<desc id="full-desc">The ReAct interviewer, an LLM, sends one tool call at a time to the controller, which validates it and returns an observation. The controller dispatches to four tools: rank_probes, which reads the belief state and lists the most informative probes; ask_probe, which gives the student a tracing question; ask_explanation, which asks the student for their reasoning; and submit_diagnosis, which is accepted only when the belief is confident or the budget is spent and writes the diagnosis and JSONL trace. Student answers go to the answer classifier and explanations go to the LLM evidence interpreter; both update the Bayesian belief state over 256 candidate models.</desc>
+<defs><marker id="ah1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#333" stroke-width="1.5"/></marker></defs>
+<g font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle">
+<g fill="#EEEDFE" stroke="#534AB7" stroke-width="1">
+<rect x="240" y="20" width="200" height="56" rx="6"/><rect x="345" y="430" width="150" height="56" rx="6"/>
+</g>
+<g fill="#E1F5EE" stroke="#0F6E56" stroke-width="1">
+<rect x="240" y="120" width="200" height="56" rx="6"/>
+<rect x="40" y="220" width="135" height="56" rx="6"/><rect x="190" y="220" width="135" height="56" rx="6"/><rect x="340" y="220" width="135" height="56" rx="6"/><rect x="490" y="220" width="135" height="56" rx="6"/>
+<rect x="40" y="330" width="160" height="56" rx="6"/><rect x="480" y="330" width="160" height="56" rx="6"/><rect x="190" y="430" width="140" height="56" rx="6"/>
+</g>
+<rect x="250" y="330" width="160" height="56" rx="6" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="1"/>
+<g font-size="12" font-weight="bold" fill="#111">
+<text x="340" y="43">ReAct interviewer</text><text x="340" y="143">Controller</text>
+<text x="107" y="243">rank_probes</text><text x="257" y="243">ask_probe</text><text x="407" y="243">ask_explanation</text><text x="557" y="243">submit_diagnosis</text>
+<text x="120" y="353">Belief state</text><text x="330" y="353">Student</text><text x="560" y="353">Diagnosis + trace</text>
+<text x="260" y="453">Answer classifier</text><text x="420" y="453">Evidence interpreter</text>
+</g>
+<g font-size="11" fill="#333">
+<text x="340" y="62">LLM decides next move</text><text x="340" y="162">Validates every tool call</text>
+<text x="107" y="262">Best probes by EIG</text><text x="257" y="262">Trace question</text><text x="407" y="262">Asks for reasoning</text><text x="557" y="262">Gated by confidence</text>
+<text x="120" y="372">Bayes, 256 models</text><text x="330" y="372">Simulated or real</text><text x="560" y="372">JSONL evidence</text>
+<text x="260" y="472">Match answer keys</text><text x="420" y="472">LLM labels reasoning</text>
+</g>
+<g stroke="#333" stroke-width="1.2" fill="none">
+<line x1="320" y1="76" x2="320" y2="117" marker-end="url(#ah1)"/>
+<line x1="360" y1="120" x2="360" y2="79" marker-end="url(#ah1)"/>
+<path d="M340 176 L340 198 M107 198 L557 198"/>
+<line x1="107" y1="198" x2="107" y2="217" marker-end="url(#ah1)"/><line x1="257" y1="198" x2="257" y2="217" marker-end="url(#ah1)"/>
+<line x1="407" y1="198" x2="407" y2="217" marker-end="url(#ah1)"/><line x1="557" y1="198" x2="557" y2="217" marker-end="url(#ah1)"/>
+<line x1="107" y1="330" x2="107" y2="279" marker-end="url(#ah1)"/>
+<line x1="270" y1="276" x2="270" y2="327" marker-end="url(#ah1)"/><line x1="395" y1="276" x2="395" y2="327" marker-end="url(#ah1)"/>
+<line x1="557" y1="276" x2="557" y2="327" marker-end="url(#ah1)"/>
+<line x1="280" y1="386" x2="280" y2="427" marker-end="url(#ah1)"/><line x1="390" y1="386" x2="390" y2="427" marker-end="url(#ah1)"/>
+<path d="M190 458 L130 458 L130 389" marker-end="url(#ah1)"/>
+<path d="M420 486 L420 506 L90 506 L90 389" marker-end="url(#ah1)"/>
+</g>
+<g font-size="11" fill="#333" text-anchor="start">
+<rect x="130" y="538" width="14" height="14" rx="2" fill="#EEEDFE" stroke="#534AB7"/><text x="150" y="549">LLM</text>
+<rect x="210" y="538" width="14" height="14" rx="2" fill="#E1F5EE" stroke="#0F6E56"/><text x="230" y="549">Application code (owns all state)</text>
+<rect x="470" y="538" width="14" height="14" rx="2" fill="#F1EFE8" stroke="#5F5E5A"/><text x="490" y="549">Environment</text>
+</g>
+</g>
+</svg>
+<figcaption><strong>Figure 1.</strong> Full design. Each turn, the ReAct interviewer requests one tool through the controller, which validates the call and returns an observation. <code>rank_probes</code> reads the belief state; <code>ask_probe</code> and <code>ask_explanation</code> question the student; <code>submit_diagnosis</code> is accepted only when the belief is confident or the budget is spent. Answers are matched to answer keys and explanations are labeled by the evidence interpreter; both update the belief state with Bayes’ rule.</figcaption>
+</figure>
+<figure>
+<svg class="diagram" viewBox="0 0 680 410" role="img" aria-labelledby="poc-title poc-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="poc-title">What the proof of concept runs</title>
+<desc id="poc-desc">Proof-of-concept loop: probe selection takes a probe from the probe bank; the student answers; the answer classifier matches the answer to the probe's answer keys; the belief state updates by Bayes' rule over 256 candidate models and feeds back into probe selection; the session ends with a diagnosis and a JSONL trace. Two LLM components, drawn dashed, are not yet in the loop: the ReAct interviewer, which will read the belief state and request probes, and the evidence interpreter, which will label free-text explanations for the belief update.</desc>
+<defs><marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#333" stroke-width="1.5"/></marker></defs>
+<g font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle">
+<g fill="#E1F5EE" stroke="#0F6E56" stroke-width="1">
+<rect x="40" y="30" width="160" height="56" rx="6"/><rect x="260" y="30" width="160" height="56" rx="6"/>
+<rect x="40" y="160" width="160" height="56" rx="6"/><rect x="260" y="160" width="160" height="56" rx="6"/><rect x="480" y="160" width="160" height="56" rx="6"/>
+</g>
+<rect x="480" y="30" width="160" height="56" rx="6" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="1"/>
+<g fill="#EEEDFE" stroke="#534AB7" stroke-width="1" stroke-dasharray="5 3">
+<rect x="260" y="290" width="160" height="56" rx="6"/><rect x="480" y="290" width="160" height="56" rx="6"/>
+</g>
+<g font-size="13" font-weight="bold" fill="#111">
+<text x="120" y="53">Probe bank</text><text x="340" y="53">Probe selection</text><text x="560" y="53">Student</text>
+<text x="120" y="183">Diagnosis + trace</text><text x="340" y="183">Belief state</text><text x="560" y="183">Answer classifier</text>
+<text x="340" y="313">ReAct interviewer</text><text x="560" y="313">Evidence interpreter</text>
+</g>
+<g font-size="11" fill="#333">
+<text x="120" y="72">15 trace programs</text><text x="340" y="72">Expected info gain</text><text x="560" y="72">Simulated, planted</text>
+<text x="120" y="202">JSONL evidence</text><text x="340" y="202">Bayes, 256 models</text><text x="560" y="202">Match answer keys</text>
+<text x="340" y="332">LLM, week 2</text><text x="560" y="332">LLM (Qwen), week 2</text>
+</g>
+<g stroke="#333" stroke-width="1.2" fill="none">
+<line x1="200" y1="58" x2="257" y2="58" marker-end="url(#ah2)"/>
+<line x1="420" y1="58" x2="477" y2="58" marker-end="url(#ah2)"/>
+<line x1="560" y1="86" x2="560" y2="157" marker-end="url(#ah2)"/>
+<line x1="480" y1="188" x2="423" y2="188" marker-end="url(#ah2)"/>
+<line x1="340" y1="160" x2="340" y2="89" marker-end="url(#ah2)"/>
+<line x1="260" y1="188" x2="203" y2="188" marker-end="url(#ah2)"/>
+<line x1="340" y1="290" x2="340" y2="219" marker-end="url(#ah2)" stroke-dasharray="5 3"/>
+<line x1="560" y1="290" x2="560" y2="219" marker-end="url(#ah2)" stroke-dasharray="5 3"/>
+</g>
+<g font-size="11" fill="#333" text-anchor="start">
+<rect x="70" y="372" width="14" height="14" rx="2" fill="#E1F5EE" stroke="#0F6E56"/><text x="90" y="383">Code in the proof of concept</text>
+<rect x="270" y="372" width="14" height="14" rx="2" fill="#EEEDFE" stroke="#534AB7"/><text x="290" y="383">LLM role</text>
+<rect x="380" y="372" width="14" height="14" rx="2" fill="none" stroke="#333" stroke-dasharray="3 2"/><text x="400" y="383">Dashed: not yet in the loop</text>
+</g>
+</g>
+</svg>
+<figcaption><strong>Figure 2.</strong> What the proof of concept runs. A fixed rule stands in for the LLM interviewer: probe selection always takes the top-ranked probe, and the session stops when the belief is confident or the budget is spent. The student answers, the answer is matched to the probe’s keys, and the belief state is updated. The interviewer and the evidence interpreter (dashed) join the loop in week 2.</figcaption>
+</figure>
+</section>
+
+<section>
+<h2>7. Schedule and Evaluation Plan</h2>
+<table>
+<caption>Table 4. Implementation and evaluation schedule</caption>
+<thead><tr><th scope="col">Week ending</th><th scope="col">Work</th></tr></thead>
+<tbody>
+<tr><th scope="row">Nov 5</th><td>Done: design and decision log, catalog and 15 probes, Bayesian belief state, information-gain selection, simulated students, code-only proof of concept with traces, cache-stable LLM interpreter, Qwen vs. Gemma comparison (Qwen chosen, D12).</td></tr>
+<tr><th scope="row">Nov 12</th><td>Wire the interpreter into the loop with “explain your reasoning” probes and conservative interpreter rates (D13); add confidence ratings; build the LangGraph ReAct interviewer with controller policies and tests from specifications; add a shuffled-order baseline.</td></tr>
+<tr><th scope="row">Nov 19</th><td>Evaluation: a harder set of vague and partly wrong explanations and LLM-played students; rerun the interpreter model comparison on it (D13); compare all selection policies with and without explanations at three student slip rates.</td></tr>
+<tr><th scope="row">Nov 26</th><td>Thanksgiving; no project submission.</td></tr>
+<tr><th scope="row">Dec 3</th><td>Limited refinement, documentation, final report and presentation slides. Stretch only: reorganize the catalog by rule (D10).</td></tr>
+</tbody>
+</table>
+<p><strong>Repeatable evaluation.</strong> Each condition runs at least 200 simulated students with fixed seeds, using one command per condition; seeded runs are byte-identical across machines (D11). Conditions: fixed order, shuffled order, information gain, information gain with explanations, and the ReAct interviewer with explanations. Students slip at 0.05, 0.15 and 0.25 while the model assumes 0.10, so the model is never exactly right about the students. The interpreter is evaluated separately on the clean set and the harder set against labels I review.</p>
+<table>
+<caption>Table 5. Measures and targets for the final evaluation</caption>
+<thead><tr><th scope="col">Measure</th><th scope="col">How it is computed</th><th scope="col">Target</th></tr></thead>
+<tbody>
+<tr><th scope="row">Exact profile match</th><td>Share of students whose diagnosed set equals the planted set</td><td>≥ 0.75 at slip 0.15</td></tr>
+<tr><th scope="row">Per-misconception precision and recall</th><td>Over all students, per catalog entry</td><td>≥ 0.85 each</td></tr>
+<tr><th scope="row">Calibration</th><td>Brier score of the final probabilities</td><td>≤ 0.05</td></tr>
+<tr><th scope="row">Confident but wrong</th><td>Share of <code>DIAGNOSED</code> sessions with a wrong profile</td><td>≤ 0.10</td></tr>
+<tr><th scope="row">Efficiency</th><td>Mean probes per session</td><td>≤ 10, below the fixed quiz</td></tr>
+<tr><th scope="row">Interpreter accuracy</th><td>Exact label match and false alarms on correct reasoning, on the harder set</td><td>≥ 0.85 exact; ≤ 5% false alarms</td></tr>
+<tr><th scope="row">LLM cost and reliability</th><td>Calls per session, median latency, cached share of prompt tokens, valid tool-call rate</td><td>Median ≤ 3 s; cached ≥ 80%; valid ≥ 0.98</td></tr>
+</tbody>
+</table>
+</section>
+
+<section>
+<h2>8. Proof of Concept</h2>
+<p>The proof of concept runs the central idea, Bayesian diagnosis with adaptive probe selection, end to end on simulated students without an LLM. Each simulated student is given a random set of planted misconceptions (each with probability 0.2) and answers every probe the way its planted model predicts, except for careless slips 15% of the time. The agent sees only the answers.</p>
+
+<h3>8.1 Run instructions</h3>
+<pre>git clone https://github.com/suzanne-szabo/AI_Final_Project_POC
+cd AI_Final_Project_POC
+uv sync
+uv run pytest
+uv run python -m mm_agent.poc --students 100 --seed 7 --student-slip 0.15 --out runs/poc-2026-11-04</pre>
+<p>The proof of concept needs only the Python standard library, so <code>python3 -m mm_agent.poc</code> with the same arguments also works without <code>uv</code>. It takes about three seconds and writes one JSONL trace per student and policy (200 files), <code>summary.md</code> and <code>summary.json</code>. The test suite (46 tests, offline) includes a check that runs every probe in real Python to confirm its correct answer. The interpreter comparison (Section 8.3) needs the course gateway and a key in <code>.env</code>: <code>uv run python scripts/compare_models.py --repeat 2</code>.</p>
+
+<h3>8.2 Results</h3>
+<table>
+<caption>Table 6. Diagnosis of 100 simulated students, ten-probe budget, student slip 0.15 (runs/poc-2026-11-04)</caption>
+<thead><tr><th scope="col">Policy</th><th scope="col" class="num">Exact profile match</th><th scope="col" class="num">Brier score</th><th scope="col" class="num">Mean probes</th><th scope="col" class="num">Ended DIAGNOSED</th></tr></thead>
+<tbody>
+<tr><th scope="row">Information gain (adaptive)</th><td class="num">0.70</td><td class="num">0.042</td><td class="num">9.4</td><td class="num">0.42</td></tr>
+<tr><th scope="row">Fixed order (baseline)</th><td class="num">0.47</td><td class="num">0.067</td><td class="num">10.0</td><td class="num">0.00</td></tr>
+</tbody>
+</table>
+<table>
+<caption>Table 7. Exact profile match by number of planted misconceptions</caption>
+<thead><tr><th scope="col">Planted misconceptions</th><th scope="col" class="num">Students</th><th scope="col" class="num">Information gain</th><th scope="col" class="num">Fixed order</th></tr></thead>
+<tbody>
+<tr><th scope="row">0 (viable model)</th><td class="num">16</td><td class="num">0.94</td><td class="num">0.56</td></tr>
+<tr><th scope="row">1</th><td class="num">30</td><td class="num">0.73</td><td class="num">0.67</td></tr>
+<tr><th scope="row">2</th><td class="num">28</td><td class="num">0.64</td><td class="num">0.46</td></tr>
+<tr><th scope="row">3 or more</th><td class="num">26</td><td class="num">0.58</td><td class="num">0.19</td></tr>
+</tbody>
+</table>
+<p>Per misconception, the adaptive policy’s precision ranged from 0.83 to 0.97 and its recall from 0.73 (<code>F1_RETURN_IS_PRINT</code>) to 1.00. The fixed order never reached the two <code>F5</code> probes within ten probes, so its <code>F5</code> recall was 0. An excerpt of one trace shows the belief state moving after each answer; this student had four planted misconceptions, all of which were recovered:</p>
+<pre>{"kind": "probe", "step": 1, "probe_id": "P01", "answer": "7 7"}
+{"kind": "belief", "step": 1, "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.2, ...}}
+{"kind": "probe", "step": 2, "probe_id": "P03", "answer": "[1, 2]"}
+{"kind": "belief", "step": 2, "marginals": {"A1_LINKED": 0.871, "A2_REVERSED": 0.0388, "A3_COPY_ON_ASSIGN": 0.845, ...}}
+...
+{"kind": "result", "terminal": "BUDGET", "probes_used": 10, "exact_match": true,
+ "diagnosis": ["A1_LINKED", "A3_COPY_ON_ASSIGN", "F1_RETURN_IS_PRINT", "F4_LOCALS_OUTLIVE_CALL"]}</pre>
+<p><strong>Reproducibility.</strong> Rerunning the seeded command on Python 3.10 first gave 0.67 instead of 0.71. Python 3.12 changed how <code>sum()</code> adds floating-point numbers, which flipped choices between nearly tied probes. Sums now use <code>math.fsum</code> and near-ties go to the earlier probe (D11); all 200 traces are now byte-identical on Python 3.10 and 3.13. The earlier run is kept as <code>runs/poc-2026-11-03/</code>.</p>
+
+<h3>8.3 LLM evidence interpreter</h3>
+<table>
+<caption>Table 8. Labeling 24 hand-labeled explanations twice each, temperature 0 (runs/models-2026-11-04_1645)</caption>
+<thead><tr><th scope="col">Model</th><th scope="col" class="num">Exact label match</th><th scope="col" class="num">Valid tool calls</th><th scope="col" class="num">False alarms on correct reasoning</th><th scope="col" class="num">Median latency</th><th scope="col" class="num">Prompt tokens from cache</th></tr></thead>
+<tbody>
+<tr><th scope="row">Qwen3.8-Flash-Next</th><td class="num">48 / 48</td><td class="num">100%</td><td class="num">0 of 12</td><td class="num">1.8 s</td><td class="num">90%</td></tr>
+<tr><th scope="row">Gemma-4-26B-A4B</th><td class="num">46 / 48</td><td class="num">100%</td><td class="num">0 of 12</td><td class="num">0.8 s</td><td class="num">88%</td></tr>
+</tbody>
+</table>
+<p>Both models gave identical labels on both passes. Gemma’s two misses were the same case: it added <code>F1_RETURN_IS_PRINT</code> to an explanation that showed only <code>F5_RUNS_AFTER_RETURN</code>. After the first two calls, every call had the shared prompt prefix (about 1,100 tokens for Qwen) served from cache, which confirms the cache-stable prompt design. I chose Qwen for the interpreter (D12). Because I wrote these explanations myself, they are cleaner than real student writing; this set shows the interpreter works, not how well it handles vague answers.</p>
+</section>
+
+<section>
+<h2>9. Feasibility Assessment</h2>
+<p><strong>The direction is feasible.</strong> With ten tracing questions and careless slips 15% of the time, the adaptive agent recovered the exact set of planted misconceptions for 70% of students, against 47% for a fixed quiz, with better-calibrated probabilities (Brier 0.042 vs. 0.067). An LLM labeled clean student explanations against the catalog almost perfectly, through valid tool calls, with the prompt cached.</p>
+<p><strong>What the proof of concept does not yet show.</strong></p>
+<ul>
+<li>Accuracy falls as students hold more misconceptions (0.94 with none, 0.58 with three or more), and 6 of the 42 sessions that stopped early as confident were wrong (0.14, above the 0.10 target). Explanations are the planned remedy: they separate slips from beliefs, which answers alone cannot do.</li>
+<li>The simulated students follow the same answer keys the agent assumes, so 70% is an upper bound for answer-only diagnosis.</li>
+<li>The interpreter has not been tested on vague or partly wrong explanations, and the interpreter model is likely to matter most there.</li>
+<li>Only one probe type (predict the output) is running. Each new type is a new likelihood feeding the same belief state, so adding types does not change the core.</li>
+</ul>
+<p><strong>What must change next:</strong> wire the interpreter into the loop, build the ReAct interviewer, add a shuffled-order baseline so the comparison is not partly about coverage, and build the harder explanation set.</p>
+</section>
+
+<section>
+<h2>10. Limitations, Failure Conditions and Decision Criteria</h2>
+<ul>
+<li><strong>Closed world:</strong> only catalog misconceptions can be diagnosed. Unrecognized answers are classified <code>OTHER</code> and a high <code>OTHER</code> rate is reported as unmodeled behavior.</li>
+<li><strong>No model vs. wrong model:</strong> a guessing student and a student with an unknown model both give scattered answers; the empty profile means “no known misconception,” not proof of a viable model.</li>
+<li><strong>Inconsistent knowledge:</strong> novices may apply a rule correctly in one context and not another (Smith, diSessa &amp; Roschelle, 1994); the slip rate absorbs only part of this.</li>
+<li><strong>Contradictory profiles:</strong> the flat catalog allows a student to “hold” two competing rules for assignment. Reorganizing it by rule is planned (D10).</li>
+<li><strong>Failure conditions:</strong> the gateway is unreachable or slow (the session falls back to answer-only diagnosis); the interpreter mislabels correct reasoning, which would wrongly flag a student; the budget ends before rare misconceptions are probed.</li>
+</ul>
+<table>
+<caption>Table 9. Criteria for the final recommendation</caption>
+<thead><tr><th scope="col">Recommendation</th><th scope="col">Criteria</th></tr></thead>
+<tbody>
+<tr><th scope="row">Deploy to the next stage (a supervised pilot with real students in the senior project)</th><td>All Table 5 targets met at slip 0.15; adaptive selection beats both fixed and shuffled baselines; interpreter meets its accuracy and false-alarm targets on the harder set.</td></tr>
+<tr><th scope="row">Revise</th><td>Adaptive selection beats the baselines but exact match is 0.50–0.75, the confident-but-wrong rate exceeds 0.10, or the interpreter misses its targets on vague explanations (fall back to answer-only diagnosis or multiple-choice probes).</td></tr>
+<tr><th scope="row">Do not use</th><td>Adaptive selection does not beat the shuffled baseline; or the interpreter’s false-alarm rate on correct reasoning exceeds 15%, since the system would then misdiagnose students who understand the material.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section>
+<h2>11. AI-Assistance Disclosure</h2>
+<ul>
+<li><strong>Claude (Anthropic, Claude app; model <code>claude-opus-5-5</code>).</strong> Material effect: proposed the architecture and the catalog representation, drafted the misconception catalog and probe bank, wrote the code, tests, decision log and representation document, found and fixed the reproducibility bug, and drafted this report. Verification: I made and recorded the design decisions (scope, representation, the Qwen choice, deferring the vague-answer retest and the catalog reorganization); ran the model comparison myself against the course gateway; confirmed the seeded proof of concept reproduces on my machine; and checked this report against the run summaries and traces.</li>
+</ul>
+</section>
+
+<section>
+<h2>References</h2>
+<ul>
+<li>Brown, J. S., &amp; Burton, R. R. (1978). Diagnostic models for procedural bugs in basic mathematical skills. <cite>Cognitive Science, 2</cite>(2), 155–192.</li>
+<li>du Boulay, B. (1986). Some difficulties of learning to program. <cite>Journal of Educational Computing Research, 2</cite>(1), 57–73.</li>
+<li>Lee, J., &amp; Corter, J. E. (2011). Diagnosis of subtraction bugs using Bayesian networks. <cite>Applied Psychological Measurement, 35</cite>(1), 27–47.</li>
+<li>Ma, L., Ferguson, J., Roper, M., &amp; Wood, M. (2011). Investigating and improving the models of programming concepts held by novice programmers. <cite>Computer Science Education, 21</cite>(1), 57–80.</li>
+<li>Smith, J. P., diSessa, A. A., &amp; Roschelle, J. (1994). Misconceptions reconceived. <cite>Journal of the Learning Sciences, 3</cite>(2), 115–163.</li>
+<li>Sorva, J. (2013). Notional machines and introductory programming education. <cite>ACM Transactions on Computing Education, 13</cite>(2), 8:1–8:31.</li>
+</ul>
+</section>
+</main>
+</body>
+</html>

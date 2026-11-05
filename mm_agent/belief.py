@@ -1,7 +1,10 @@
 """The belief state: an exact Bayesian posterior over every possible student profile.
 
 With 8 misconceptions there are 2**8 = 256 profiles, few enough to enumerate, so no independence
-assumption is needed after the prior. The likelihood is a slip model: a student gives the answer
+assumption is needed after the prior.
+
+All sums use math.fsum, which is correctly rounded on every Python version. Plain sum() changed
+in Python 3.12, which made runs with the same seed differ between Python versions (D11). The likelihood is a slip model: a student gives the answer
 their profile predicts with probability 1 - slip, and otherwise any other option uniformly.
 
 The belief state is application-owned. The LLM may read a summary of it but never writes it.
@@ -21,7 +24,7 @@ PROFILES: tuple[frozenset[str], ...] = tuple(
 
 
 def entropy(weights: list[float]) -> float:
-    return -sum(w * math.log2(w) for w in weights if w > 0)
+    return -math.fsum(w * math.log2(w) for w in weights if w > 0)
 
 
 class Belief:
@@ -32,7 +35,7 @@ class Belief:
         self._normalize()
 
     def _normalize(self) -> None:
-        total = sum(self.weights)
+        total = math.fsum(self.weights)
         self.weights = [w / total for w in self.weights]
 
     def likelihood(self, probe: Probe, option: str, profile: frozenset[str]) -> float:
@@ -48,13 +51,13 @@ class Belief:
     def predictive(self, probe: Probe) -> dict[str, float]:
         """Probability of each option for this probe under the current belief."""
         return {
-            option: sum(w * self.likelihood(probe, option, p) for w, p in zip(self.weights, PROFILES))
+            option: math.fsum(w * self.likelihood(probe, option, p) for w, p in zip(self.weights, PROFILES))
             for option in probe.options()
         }
 
     def marginals(self) -> dict[str, float]:
         """P(student holds misconception m) for each m, in catalog order."""
-        return {m: sum(w for w, p in zip(self.weights, PROFILES) if m in p) for m in IDS}
+        return {m: math.fsum(w for w, p in zip(self.weights, PROFILES) if m in p) for m in IDS}
 
     def entropy(self) -> float:
         return entropy(self.weights)
