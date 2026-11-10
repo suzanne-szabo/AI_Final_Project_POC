@@ -11,7 +11,7 @@ from mm_agent.catalog import IDS
 from mm_agent.poc import SessionConfig, diagnose
 from mm_agent.probes import BANK, OTHER, normalize
 from mm_agent.select import expected_information_gain, rank_probes
-from mm_agent.simstudent import SimStudent
+from mm_agent.students import SimStudent
 
 
 def run_python(code: str) -> str:

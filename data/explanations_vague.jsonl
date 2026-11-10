@@ -1,0 +1,34 @@
+{"answer": "6", "explanation": "bump kinda changes it so 6", "id": "V01", "informative": true, "kind": "vague", "labels": ["F2_PARAM_LINKED"], "probe_id": "P07"}
+{"answer": "3 | 3", "explanation": "y is 3 bc f printed it", "id": "V02", "informative": true, "kind": "vague", "labels": ["F1_RETURN_IS_PRINT"], "probe_id": "P05"}
+{"answer": "[9]", "explanation": "other and nums are the same thing after that line??", "id": "V03", "informative": true, "kind": "vague", "labels": ["A1_LINKED"], "probe_id": "P04"}
+{"answer": "42", "explanation": "secret is 42 cause make sets it", "id": "V04", "informative": true, "kind": "vague", "labels": ["F4_LOCALS_OUTLIVE_CALL"], "probe_id": "P10"}
+{"answer": "after | 2", "explanation": "it prints after first since that line is still in check", "id": "V05", "informative": true, "kind": "vague", "labels": ["F5_RUNS_AFTER_RETURN"], "probe_id": "P12"}
+{"answer": "hi | start", "explanation": "greet prints hi doesnt it", "id": "V06", "informative": true, "kind": "vague", "labels": ["F3_DEF_RUNS_BODY"], "probe_id": "P08"}
+{"answer": "[]", "explanation": "items is like its own list now", "id": "V07", "informative": true, "kind": "vague", "labels": ["A3_COPY_ON_ASSIGN"], "probe_id": "P14"}
+{"answer": "10 10", "explanation": "x goes into y", "id": "V08", "informative": true, "kind": "vague", "labels": ["A2_REVERSED"], "probe_id": "P02"}
+{"answer": "6 6", "explanation": "x was tripled", "id": "V09", "informative": true, "kind": "vague", "labels": ["F2_PARAM_LINKED"], "probe_id": "P15"}
+{"answer": "8 | done", "explanation": "returning 8 puts it out", "id": "V10", "informative": true, "kind": "vague", "labels": ["F1_RETURN_IS_PRINT"], "probe_id": "P06"}
+{"answer": "non-pos", "explanation": "it ends at the bottom return", "id": "V11", "informative": true, "kind": "vague", "labels": ["F5_RUNS_AFTER_RETURN"], "probe_id": "P13"}
+{"answer": "7 7", "explanation": "b follows a", "id": "V12", "informative": true, "kind": "vague", "labels": ["A1_LINKED"], "probe_id": "P01"}
+{"answer": "5", "explanation": "n is only inside the function i think", "id": "V13", "informative": true, "kind": "vague", "labels": [], "probe_id": "P07"}
+{"answer": "3 | None", "explanation": "f doesnt give anything back", "id": "V14", "informative": true, "kind": "vague", "labels": [], "probe_id": "P05"}
+{"answer": "error", "explanation": "secret is gone after", "id": "V15", "informative": true, "kind": "vague", "labels": [], "probe_id": "P10"}
+{"answer": "2", "explanation": "return stops it", "id": "V16", "informative": true, "kind": "vague", "labels": [], "probe_id": "P12"}
+{"answer": "[1, 2, 3]", "explanation": "same list so yeah", "id": "V17", "informative": true, "kind": "vague", "labels": [], "probe_id": "P03"}
+{"answer": "start", "explanation": "nobody calls greet", "id": "V18", "informative": true, "kind": "vague", "labels": [], "probe_id": "P08"}
+{"answer": "6", "explanation": "idk", "id": "V19", "informative": false, "kind": "none", "labels": [], "probe_id": "P07"}
+{"answer": "4 3", "explanation": "just guessed", "id": "V20", "informative": false, "kind": "none", "labels": [], "probe_id": "P11"}
+{"answer": "3 | 3", "explanation": "that's what i got", "id": "V21", "informative": false, "kind": "none", "labels": [], "probe_id": "P05"}
+{"answer": "A | B | A", "explanation": "it felt right", "id": "V22", "informative": false, "kind": "none", "labels": [], "probe_id": "P09"}
+{"answer": "[]", "explanation": "not sure tbh", "id": "V23", "informative": false, "kind": "none", "labels": [], "probe_id": "P14"}
+{"answer": "20 20", "explanation": "i dunno", "id": "V24", "informative": false, "kind": "none", "labels": [], "probe_id": "P02"}
+{"answer": "pos", "explanation": "seemed obvious", "id": "V25", "informative": false, "kind": "none", "labels": [], "probe_id": "P13"}
+{"answer": "42", "explanation": "because that's the answer", "id": "V26", "informative": false, "kind": "none", "labels": [], "probe_id": "P10"}
+{"answer": "4 3", "explanation": "setup shows 4 when it returns and value is still 3 after", "id": "V27", "informative": true, "kind": "mixed", "labels": ["F1_RETURN_IS_PRINT", "F4_LOCALS_OUTLIVE_CALL"], "probe_id": "P11"}
+{"answer": "6 6", "explanation": "n is x so x changes, and the return prints 6 too", "id": "V28", "informative": true, "kind": "mixed", "labels": ["F1_RETURN_IS_PRINT", "F2_PARAM_LINKED"], "probe_id": "P15"}
+{"answer": "7 7", "explanation": "b = a hands b's value to a and then they stay linked", "id": "V29", "informative": true, "kind": "mixed", "labels": ["A1_LINKED", "A2_REVERSED"], "probe_id": "P01"}
+{"answer": "after | 2", "explanation": "check prints 2 when it returns and then the after line runs", "id": "V30", "informative": true, "kind": "mixed", "labels": ["F1_RETURN_IS_PRINT", "F5_RUNS_AFTER_RETURN"], "probe_id": "P12"}
+{"answer": "B | A", "explanation": "show runs when it's defined but its output comes after B", "id": "V31", "informative": true, "kind": "partly_wrong", "labels": ["F3_DEF_RUNS_BODY"], "probe_id": "P09"}
+{"answer": "5", "explanation": "n is a copy of x so changing n doesn't change x", "id": "V32", "informative": true, "kind": "partly_wrong", "labels": [], "probe_id": "P07"}
+{"answer": "[1]", "explanation": "items is a copy but append still reaches data somehow", "id": "V33", "informative": true, "kind": "partly_wrong", "labels": ["A3_COPY_ON_ASSIGN"], "probe_id": "P14"}
+{"answer": "done", "explanation": "return gives 8 back but it isnt printed, i think it prints when returned sometimes", "id": "V34", "informative": true, "kind": "partly_wrong", "labels": ["F1_RETURN_IS_PRINT"], "probe_id": "P06"}

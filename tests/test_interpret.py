@@ -30,7 +30,7 @@ def call(name, args):
 
 
 def test_prefix_is_identical_across_cases_and_reloads():
-    model = ScriptedModel([call(interp.TOOL_NAME, {"misconceptions": [], "rationale": "x"})] * 2)
+    model = ScriptedModel([call(interp.TOOL_NAME, {"misconceptions": [], "rationale": "x", "informative": True})] * 2)
     bound = interp.bind(model)
     interp.interpret(bound, BY_ID["P05"], "3 | None", "no return, so None")
     interp.interpret(bound, BY_ID["P12"], "after | 2", "keeps going after return")
@@ -50,13 +50,13 @@ def test_system_prompt_has_no_volatile_content():
 
 def test_valid_call_is_parsed_and_sorted():
     model = ScriptedModel([call(interp.TOOL_NAME, {"misconceptions": ["F4_LOCALS_OUTLIVE_CALL", "F1_RETURN_IS_PRINT"],
-                                                   "rationale": "says value still 3"})])
+                                                   "rationale": "says value still 3", "informative": True})])
     ev = interp.interpret(interp.bind(model), BY_ID["P11"], "4 3", "...")
     assert ev.valid and ev.labels == ["F1_RETURN_IS_PRINT", "F4_LOCALS_OUTLIVE_CALL"]
 
 
 def test_unknown_id_is_rejected():
-    model = ScriptedModel([call(interp.TOOL_NAME, {"misconceptions": ["MADE_UP"], "rationale": "x"})])
+    model = ScriptedModel([call(interp.TOOL_NAME, {"misconceptions": ["MADE_UP"], "rationale": "x", "informative": True})])
     ev = interp.interpret(interp.bind(model), BY_ID["P05"], "3 | 3", "...")
     assert not ev.valid and "unknown" in ev.error
 

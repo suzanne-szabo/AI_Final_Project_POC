@@ -26,6 +26,20 @@ def normalize(answer: str) -> str:
     return " | ".join(line for line in lines if line)
 
 
+_HEDGES = re.compile(r"\b(?:i'm not sure|im not sure|not sure|i think|i guess|maybe|probably)\b")
+
+
+def strip_hedges(text: str) -> str:
+    """Remove hedge phrases from a student's answer before classification (specs/tools.md §2.2, D24).
+
+    Lower-cases, removes "i think", "i guess", "maybe", "probably", "not sure", "i'm not sure",
+    "im not sure" and every "?", then trims commas and whitespace from both ends. Text that is empty
+    afterwards stays empty (and classifies as OTHER). `normalize` and `classify` are unchanged.
+    """
+    text = _HEDGES.sub("", text.lower()).replace("?", "")
+    return text.strip(", \t\r\n")
+
+
 @dataclass(frozen=True)
 class Probe:
     id: str

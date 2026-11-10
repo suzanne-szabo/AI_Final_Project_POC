@@ -98,6 +98,7 @@ mm_agent/
   tracing.py      LangSmith hooks, no-op unless enabled                         (new)
   scoring.py      Scoring of finished sessions against planted profiles         (new; moved from poc.py)
   run.py          python -m mm_agent.run: batch sessions, traces, summary       (new)
+  check_scenarios.py  The eight interviewer-check scenarios (see agent.md §7)    (new)
   poc.py          Week-1 proof of concept, kept so its evidence stays reproducible  (unchanged)
 data/
   explanations.jsonl        24 labeled explanations: interpreter test set (unchanged)

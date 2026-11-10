@@ -1,24 +1,24 @@
-{"id": "E01", "probe_id": "P01", "answer": "7 7", "explanation": "b was set equal to a, so b is tied to a. When a becomes 7, b becomes 7 too.", "labels": ["A1_LINKED"]}
-{"id": "E02", "probe_id": "P04", "answer": "[9]", "explanation": "other and nums are connected after other = nums, so whatever other gets, nums gets as well.", "labels": ["A1_LINKED"]}
-{"id": "E03", "probe_id": "P02", "answer": "10 10", "explanation": "x = y means x passes its value over to y, so y becomes 10 and x stays 10.", "labels": ["A2_REVERSED"]}
-{"id": "E04", "probe_id": "P01", "answer": "7 3", "explanation": "On line 3, b = a gives b's 3 to a. Then a is changed to 7. b never changed so it's still 3.", "labels": ["A2_REVERSED"]}
-{"id": "E05", "probe_id": "P03", "answer": "[1, 2]", "explanation": "b = a makes b its own copy of the list, so appending to b does not affect a.", "labels": ["A3_COPY_ON_ASSIGN"]}
-{"id": "E06", "probe_id": "P14", "answer": "[]", "explanation": "The function gets a copy of data called items. It adds 1 to its copy, but data outside is still empty.", "labels": ["A3_COPY_ON_ASSIGN"]}
-{"id": "E07", "probe_id": "P05", "answer": "3 | 3", "explanation": "f prints 3, and that's what it gives back, so y is 3 and printing y shows 3 again.", "labels": ["F1_RETURN_IS_PRINT"]}
-{"id": "E08", "probe_id": "P06", "answer": "8 | done", "explanation": "double(4) returns 8, and returning shows the number on the screen. Then it prints done.", "labels": ["F1_RETURN_IS_PRINT"]}
-{"id": "E09", "probe_id": "P07", "answer": "6", "explanation": "x is passed into bump as n, and n goes up by one, which means x goes up by one, so 6.", "labels": ["F2_PARAM_LINKED"]}
-{"id": "E10", "probe_id": "P15", "answer": "6 6", "explanation": "triple changes n to 6, and since n is x, x is 6 now too. y also gets 6.", "labels": ["F2_PARAM_LINKED"]}
-{"id": "E11", "probe_id": "P08", "answer": "hi | start", "explanation": "First the program hits greet, which prints hi, and then it prints start.", "labels": ["F3_DEF_RUNS_BODY"]}
-{"id": "E12", "probe_id": "P09", "answer": "a | b | a", "explanation": "Python reads top to bottom, so the print inside show happens first, then B, then show() prints A again.", "labels": ["F3_DEF_RUNS_BODY"]}
-{"id": "E13", "probe_id": "P10", "answer": "42", "explanation": "make() set secret to 42, so after calling it, secret is 42 and that is printed.", "labels": ["F4_LOCALS_OUTLIVE_CALL"]}
-{"id": "E14", "probe_id": "P11", "answer": "4 3", "explanation": "setup made value 3 and returned 4, so result is 4 and value is still 3 from inside the function.", "labels": ["F4_LOCALS_OUTLIVE_CALL"]}
-{"id": "E15", "probe_id": "P12", "answer": "after | 2", "explanation": "The function returns n but keeps going to the next line and prints after, then the 2 gets printed.", "labels": ["F5_RUNS_AFTER_RETURN"]}
-{"id": "E16", "probe_id": "P13", "answer": "non-pos", "explanation": "5 is positive so it hits return pos, but then the last line also runs and returns non-pos, which replaces it.", "labels": ["F5_RUNS_AFTER_RETURN"]}
-{"id": "E17", "probe_id": "P07", "answer": "5", "explanation": "n is a local name inside bump. n = n + 1 just rebinds n to 6; x outside still refers to 5.", "labels": []}
-{"id": "E18", "probe_id": "P05", "answer": "3 | None", "explanation": "f prints 3 but has no return, so it gives back None. y is None.", "labels": []}
-{"id": "E19", "probe_id": "P03", "answer": "[1, 2, 3]", "explanation": "a and b are two names for the same list, so appending through b shows up when you print a.", "labels": []}
-{"id": "E20", "probe_id": "P10", "answer": "error", "explanation": "secret only exists while make is running. Once it returns, that variable is gone, so print(secret) fails.", "labels": []}
-{"id": "E21", "probe_id": "P08", "answer": "start", "explanation": "def just defines greet, it never gets called, so only start shows.", "labels": []}
-{"id": "E22", "probe_id": "P15", "answer": "6 6", "explanation": "honestly I'm not sure, I just multiplied by 3", "labels": ["F2_PARAM_LINKED"]}
-{"id": "E23", "probe_id": "P11", "answer": "4 3", "explanation": "the function returns value + 1 so result is 4, and value is 3. it prints both, and returning also shows the value I think", "labels": ["F1_RETURN_IS_PRINT", "F4_LOCALS_OUTLIVE_CALL"]}
-{"id": "E24", "probe_id": "P14", "answer": "[1]", "explanation": "idk, append adds a 1", "labels": []}
+{"id": "E01", "probe_id": "P01", "answer": "7 7", "explanation": "b was set equal to a, so b is tied to a. When a becomes 7, b becomes 7 too.", "labels": ["A1_LINKED"], "informative": true}
+{"id": "E02", "probe_id": "P04", "answer": "[9]", "explanation": "other and nums are connected after other = nums, so whatever other gets, nums gets as well.", "labels": ["A1_LINKED"], "informative": true}
+{"id": "E03", "probe_id": "P02", "answer": "10 10", "explanation": "x = y means x passes its value over to y, so y becomes 10 and x stays 10.", "labels": ["A2_REVERSED"], "informative": true}
+{"id": "E04", "probe_id": "P01", "answer": "7 3", "explanation": "On line 3, b = a gives b's 3 to a. Then a is changed to 7. b never changed so it's still 3.", "labels": ["A2_REVERSED"], "informative": true}
+{"id": "E05", "probe_id": "P03", "answer": "[1, 2]", "explanation": "b = a makes b its own copy of the list, so appending to b does not affect a.", "labels": ["A3_COPY_ON_ASSIGN"], "informative": true}
+{"id": "E06", "probe_id": "P14", "answer": "[]", "explanation": "The function gets a copy of data called items. It adds 1 to its copy, but data outside is still empty.", "labels": ["A3_COPY_ON_ASSIGN"], "informative": true}
+{"id": "E07", "probe_id": "P05", "answer": "3 | 3", "explanation": "f prints 3, and that's what it gives back, so y is 3 and printing y shows 3 again.", "labels": ["F1_RETURN_IS_PRINT"], "informative": true}
+{"id": "E08", "probe_id": "P06", "answer": "8 | done", "explanation": "double(4) returns 8, and returning shows the number on the screen. Then it prints done.", "labels": ["F1_RETURN_IS_PRINT"], "informative": true}
+{"id": "E09", "probe_id": "P07", "answer": "6", "explanation": "x is passed into bump as n, and n goes up by one, which means x goes up by one, so 6.", "labels": ["F2_PARAM_LINKED"], "informative": true}
+{"id": "E10", "probe_id": "P15", "answer": "6 6", "explanation": "triple changes n to 6, and since n is x, x is 6 now too. y also gets 6.", "labels": ["F2_PARAM_LINKED"], "informative": true}
+{"id": "E11", "probe_id": "P08", "answer": "hi | start", "explanation": "First the program hits greet, which prints hi, and then it prints start.", "labels": ["F3_DEF_RUNS_BODY"], "informative": true}
+{"id": "E12", "probe_id": "P09", "answer": "a | b | a", "explanation": "Python reads top to bottom, so the print inside show happens first, then B, then show() prints A again.", "labels": ["F3_DEF_RUNS_BODY"], "informative": true}
+{"id": "E13", "probe_id": "P10", "answer": "42", "explanation": "make() set secret to 42, so after calling it, secret is 42 and that is printed.", "labels": ["F4_LOCALS_OUTLIVE_CALL"], "informative": true}
+{"id": "E14", "probe_id": "P11", "answer": "4 3", "explanation": "setup made value 3 and returned 4, so result is 4 and value is still 3 from inside the function.", "labels": ["F4_LOCALS_OUTLIVE_CALL"], "informative": true}
+{"id": "E15", "probe_id": "P12", "answer": "after | 2", "explanation": "The function returns n but keeps going to the next line and prints after, then the 2 gets printed.", "labels": ["F5_RUNS_AFTER_RETURN"], "informative": true}
+{"id": "E16", "probe_id": "P13", "answer": "non-pos", "explanation": "5 is positive so it hits return pos, but then the last line also runs and returns non-pos, which replaces it.", "labels": ["F5_RUNS_AFTER_RETURN"], "informative": true}
+{"id": "E17", "probe_id": "P07", "answer": "5", "explanation": "n is a local name inside bump. n = n + 1 just rebinds n to 6; x outside still refers to 5.", "labels": [], "informative": true}
+{"id": "E18", "probe_id": "P05", "answer": "3 | None", "explanation": "f prints 3 but has no return, so it gives back None. y is None.", "labels": [], "informative": true}
+{"id": "E19", "probe_id": "P03", "answer": "[1, 2, 3]", "explanation": "a and b are two names for the same list, so appending through b shows up when you print a.", "labels": [], "informative": true}
+{"id": "E20", "probe_id": "P10", "answer": "error", "explanation": "secret only exists while make is running. Once it returns, that variable is gone, so print(secret) fails.", "labels": [], "informative": true}
+{"id": "E21", "probe_id": "P08", "answer": "start", "explanation": "def just defines greet, it never gets called, so only start shows.", "labels": [], "informative": true}
+{"id": "E22", "probe_id": "P15", "answer": "6 6", "explanation": "honestly I'm not sure, I just multiplied by 3", "labels": [], "informative": false}
+{"id": "E23", "probe_id": "P11", "answer": "4 3", "explanation": "the function returns value + 1 so result is 4, and value is 3. it prints both, and returning also shows the value I think", "labels": ["F1_RETURN_IS_PRINT", "F4_LOCALS_OUTLIVE_CALL"], "informative": true}
+{"id": "E24", "probe_id": "P14", "answer": "[1]", "explanation": "idk, append adds a 1", "labels": [], "informative": true}

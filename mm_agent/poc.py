@@ -24,7 +24,7 @@ from mm_agent.belief import Belief
 from mm_agent.catalog import IDS
 from mm_agent.probes import BANK
 from mm_agent.select import choose
-from mm_agent.simstudent import SimStudent, random_profile
+from mm_agent.students import SimStudent, random_profile
 
 
 @dataclass(frozen=True)

@@ -119,7 +119,7 @@ Adds `"The probe budget is spent: call submit_diagnosis."` when no probe may be 
 ```
 python -m mm_agent.run --deciders eig eig_explain [interviewer] --students 100 --seed 7
     [--rate 0.2] [--student-slip 0.15] [--student bank|llm] [--confidence-mode informative|uninformative|none]
-    [--no-use-confidence] [--interpreter oracle|llm|none] [--interviewer-model NAME]
+    [--no-use-confidence] [--vague-answer-rate 0.15] [--interpreter oracle|llm|none] [--interviewer-model NAME]
     [--interpreter-model NAME] [--student-model NAME] [--max-probes 10] [--out DIR]
 ```
 
@@ -129,9 +129,10 @@ python -m mm_agent.run --deciders eig eig_explain [interviewer] --students 100 -
   Every decider faces freshly built, identically seeded students.
 - **Defaults:** `--interpreter oracle`, `--student bank`, `--confidence-mode informative`; model names
   default to D12 for the interpreter and are required for `interviewer` and `--student llm`.
+- **Exit codes:** `main(argv) -> int` returns 0 on success; invalid options return 2 after printing a message (it does not raise).
 - **Rejected combinations (exit code 2 with a message):** `interviewer` without `--interviewer-model`;
   `eig_explain` or `interviewer` with `--interpreter none`; `--student llm` with `--interpreter oracle`;
-  any LLM option without `LLM_API_KEY`.
+  any LLM option without a non-empty `LLM_API_KEY` (from the environment or `.env`).
 - **Output:** `DIR/<decider>_<student_id>.jsonl`; `DIR/summary.md` and `summary.json`; `DIR/manifest.json`
   (command line, git commit if available, config, models, start and end time, tracing on or off).
 - **Summary per decider:** exact profile match; Brier score; per-misconception precision and recall;
@@ -162,7 +163,12 @@ Eight scenarios. Each is built by replaying a fixed sequence of actions through 
 | S7 | Last answer correct, confidence 5 | `rank_probes` or `ask_probe` |
 | S8 | Previous call was rejected (probe already asked) | an accepted call |
 
-The script checks that each built scenario is in the stated state (for example, S4's belief really is
+The scenarios are built by a function the tests can import without a network:
+`build_scenarios() -> list[Scenario]` in `mm_agent/check_scenarios.py`, where
+`Scenario(name, session, controller, messages, expected)` holds the replayed session and controller, the
+exact message list the interviewer would be sent (system prompt, opening, stored history, status
+message), and `expected`, a function `(tool_name, accepted) -> bool`. The script imports it and adds
+only the live model calls and the report. The script checks that each built scenario is in the stated state (for example, S4's belief really is
 confident) before calling a model. Output: `runs/interviewer-check-<stamp>/<model>.jsonl` (one record per
 call: scenario, tool, args, valid, accepted, expected, seconds, usage) and `summary.md` with, per model:
 valid single tool call rate, accepted rate, expected-action rate, median latency, cached share.

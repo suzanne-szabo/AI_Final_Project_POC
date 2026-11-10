@@ -56,6 +56,9 @@ entry; and at least 1 `none` entry. That is at least 17 × 2 + 15 × 4 = 94 entr
 explanations that show two misconceptions). Test-set records gain `informative` (bool) and use `labels`
 for the evident labels. No text may appear in both the bank and a test set.
 
+`Entry` is a frozen dataclass with exactly the fields in the table above (`holds` is `tuple[str, ...] | None`,
+`evident` is `tuple[str, ...]`).
+
 ```python
 class ExplanationBank:
     @classmethod
@@ -166,7 +169,7 @@ class Interpreter(Protocol):
 ```
 
 `Evidence` is the existing dataclass in `interpret.py` (labels, rationale, valid, error, seconds, usage),
-with a new field `informative: bool` (D23).
+with a new last field `informative: bool = True` (D23).
 
 **`LLMInterpreter(model)`** binds the interpreter tool with `interpret.bind(model)` once at construction and
 calls `interpret.interpret(...)`. The prompt-cache rules (D8) still hold.
@@ -176,7 +179,9 @@ calls `interpret.interpret(...)`. The prompt-cache rules (D8) still hold.
 'idk', 'I guessed', or only restating the answer". The system prompt adds two rules: an explanation
 that is not informative gets `informative: false` and an empty `misconceptions` list; and hedged or
 imprecise wording still counts as informative when the reasoning can be recognized. A reply with
-`informative: false` and a non-empty list is invalid. Because the prompt changes, the interpreter
+`informative: false` and a non-empty list is invalid. The old rule that allowed labeling from the
+prediction alone ("a wrong prediction with no explanation of why is weak evidence...") is removed: a
+label needs reasoning in the explanation. (Clean-set case E22 is relabeled accordingly.) Because the prompt changes, the interpreter
 comparison is rerun on both test sets (D25).
 
 **`OracleInterpreter(bank, sensitivity, false_alarm, rng)`**
