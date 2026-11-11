@@ -16,6 +16,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from mm_agent.catalog import IDS
 from mm_agent.probes import BY_ID, strip_hedges
 from mm_agent.select import rank_probes as rank_by_gain
 from mm_agent.tracing import traceable
@@ -157,14 +158,18 @@ def ask_explanation(session, args: AskExplanationArgs) -> dict:
         evidence, valid, error = None, False, f"{type(exc).__name__}: {exc}"
     informative = bool(valid and evidence.informative)
     labels = sorted(evidence.labels) if valid else []
-    applied = [m for m in labels if m in probe.keys]
-    ignored = [m for m in labels if m not in probe.keys]
+    # D27: score only the misconceptions the answer matched; a correct or unexpected answer scores all
+    # of the probe's relevant misconceptions (specs/tools.md §2.3).
+    matched = answer_matches(probe, probe.classify(strip_hedges(last_answer)))
+    scored = [m for m in IDS if m in probe.keys and (m in matched or matched[0] in ("correct", "unexpected"))]
+    applied = [m for m in labels if m in scored]
+    ignored = [m for m in labels if m not in scored]
     if informative:
         session.belief.update_explanation(probe, applied, config.interpreter_sensitivity,
-                                          config.interpreter_false_alarm)
+                                          config.interpreter_false_alarm, scope=scored)
     session.explained.add(probe.id)
     data = {"probe_id": probe.id, "explanation": text, "interpreter_valid": valid,
-            "informative": informative, "belief_updated": informative, "labels": labels,
+            "informative": informative, "belief_updated": informative, "scored": scored, "labels": labels,
             "applied_labels": applied, "ignored_labels": ignored,
             "marginals": rounded(session.belief.marginals()),
             "explanations_remaining": config.max_explanations - len(session.explained),

@@ -48,16 +48,19 @@ Status: Draft v1 (2026-11-09).
 ### 2.3 `ask_explanation`
 - **Arguments:** none.
 - **Effect:** for the last probe: `text = student.explain(probe)`;
-  `evidence = interpreter.label(probe, last_answer, text)`. If `evidence.valid` and
-  `evidence.informative`: `belief.update_explanation(probe, applied, config.interpreter_sensitivity,
-  config.interpreter_false_alarm)` where `applied` is the labels in `probe.keys` (D21). If the
+  `evidence = interpreter.label(probe, last_answer, text)`. **Scope (D27):** if the last answer's
+  `answer_matches` names misconceptions, the scored set is those ids; for a `correct` or `unexpected`
+  answer it is all of `probe.keys`. If `evidence.valid` and `evidence.informative`:
+  `belief.update_explanation(probe, applied, config.interpreter_sensitivity,
+  config.interpreter_false_alarm, scope=scored)` where `applied` is the labels in the scored set and
+  `ignored` is every other label (D21, D27). If the
   explanation is not informative, or the interpreter failed, the belief is unchanged: "I don't know" is
   not evidence that the student holds no misconception (D23). An interpreter failure is never terminal.
   Marks the last probe as explained.
 - **Data:**
 ```json
 {"probe_id": "P07", "explanation": "x is passed in so it goes up too", "interpreter_valid": true,
- "informative": true, "belief_updated": true, "labels": ["F2_PARAM_LINKED"], "applied_labels": ["F2_PARAM_LINKED"], "ignored_labels": [],
+ "informative": true, "belief_updated": true, "scored": ["F2_PARAM_LINKED"], "labels": ["F2_PARAM_LINKED"], "applied_labels": ["F2_PARAM_LINKED"], "ignored_labels": [],
  "marginals": {"...": 0.0}, "explanations_remaining": 4, "confident": true}
 ```
   When not valid, `labels`, `applied_labels` and `ignored_labels` are `[]` and an `interpreter_error`

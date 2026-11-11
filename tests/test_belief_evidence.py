@@ -90,3 +90,19 @@ def test_is_confident_and_estimate():
     b.update(P07, "6", confidence=5, slip_by_confidence=SLIPS)
     assert b.estimate()["most_likely"] == [F2]
     assert all(round(v, 4) == v for v in b.estimate()["marginals"].values())
+
+
+def test_scope_narrows_the_scored_set():
+    p01 = BY_ID["P01"]
+    scoped, unscoped = Belief(), Belief()
+    scoped.update_explanation(p01, ["A1_LINKED"], 0.85, 0.05, scope=["A1_LINKED"])
+    unscoped.update_explanation(p01, ["A1_LINKED"], 0.85, 0.05)
+    assert scoped.marginals()["A2_REVERSED"] == pytest.approx(0.2)         # not scored (D27)
+    assert unscoped.marginals()["A2_REVERSED"] < 0.2                       # scored as "not reported"
+    assert scoped.marginals()["A1_LINKED"] == pytest.approx(unscoped.marginals()["A1_LINKED"])
+
+
+@pytest.mark.parametrize("scope", [["NOT_AN_ID"], ["F2_PARAM_LINKED"]])
+def test_invalid_scope_is_rejected(scope):
+    with pytest.raises(ValueError):
+        Belief().update_explanation(BY_ID["P01"], [], 0.85, 0.05, scope=scope)

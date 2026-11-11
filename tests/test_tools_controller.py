@@ -279,3 +279,26 @@ def test_trace_and_result():
     assert result.terminal == "BUDGET" and result.probes_used == 2 and result.explanations_used == 1
     assert result.estimate is not None and result.exact_match == (set(result.estimate["most_likely"]) == set())
     json.dumps(trace, sort_keys=True)
+
+
+def test_explanation_scope_follows_the_matched_answer():
+    """D27: an answer matching A1's key on P01 scores only A1; a correct answer scores A1 and A2."""
+    s1, c1 = make(student(P01=Response("7 7", 5)), FixedInterpreter(ev([A1])))
+    c1.handle("ask_probe", {"probe_id": "P01"})
+    a2_before = s1.belief.marginals()["A2_REVERSED"]
+    d = c1.handle("ask_explanation", {}).data
+    assert d["scored"] == [A1] and d["applied_labels"] == [A1]
+    assert s1.belief.marginals()["A2_REVERSED"] == pytest.approx(a2_before)
+    s2, c2 = make(student(), FixedInterpreter(ev([])))
+    c2.handle("ask_probe", {"probe_id": "P01"})
+    a2 = s2.belief.marginals()["A2_REVERSED"]
+    d2 = c2.handle("ask_explanation", {}).data
+    assert d2["scored"] == ["A1_LINKED", "A2_REVERSED"]
+    assert s2.belief.marginals()["A2_REVERSED"] < a2
+
+
+def test_off_scope_labels_are_ignored_not_applied():
+    s, c = make(student(P01=Response("7 7", 5)), FixedInterpreter(ev([A1, "A2_REVERSED"])))
+    c.handle("ask_probe", {"probe_id": "P01"})
+    d = c.handle("ask_explanation", {}).data
+    assert d["applied_labels"] == [A1] and d["ignored_labels"] == ["A2_REVERSED"]

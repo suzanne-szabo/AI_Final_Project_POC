@@ -64,12 +64,12 @@ class Belief:
         self._normalize()
 
     def update_explanation(self, probe: Probe, labels: Iterable[str], sensitivity: float,
-                           false_alarm: float) -> None:
+                           false_alarm: float, scope: Iterable[str] | None = None) -> None:
         """Condition on an interpreter's labels for an explanation of `probe` (specs/belief.md §3).
 
-        Only the probe's relevant misconceptions (`probe.keys`) are scored (D21); other labels are
-        ignored here and recorded by the caller. An empty label list is evidence against each
-        relevant misconception.
+        Only the scored set is scored: the probe's relevant misconceptions (`probe.keys`, D21), narrowed
+        to `scope` when given (D27). Other labels are ignored here and recorded by the caller. An empty
+        label list is evidence against each scored misconception.
         """
         labels = set(labels)
         unknown = sorted(labels - set(IDS))
@@ -78,6 +78,13 @@ class Belief:
         if not 0 < false_alarm < sensitivity < 1:
             raise ValueError(f"need 0 < false_alarm < sensitivity < 1, got {false_alarm}, {sensitivity}")
         relevant = [m for m in IDS if m in probe.keys]
+        if scope is not None:
+            scope = set(scope)
+            if scope - set(IDS):
+                raise ValueError(f"unknown misconception ids in scope: {sorted(scope - set(IDS))}")
+            relevant = [m for m in relevant if m in scope]
+            if not relevant:
+                raise ValueError(f"scope {sorted(scope)} has no id relevant to {probe.id}")
 
         def factor(profile: frozenset[str]) -> float:
             result = 1.0

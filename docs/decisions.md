@@ -30,6 +30,7 @@ Owner (design authority): Suzanne Szabo. Recorded 2026-11-03.
 | D24 | Simulated students sometimes hedge their answers ("maybe 7 5?", 15% by default) with low confidence; `strip_hedges` removes hedge phrases before classification. `normalize` and `classify` are unchanged. | Real answers are hedged too; hedging should lower the evidence through the confidence rating, not turn a recognizable answer into `OTHER`. |
 | D25 | The interpreter comparison (Qwen vs. Gemma) is rerun this week on the clean and vague sets with the D23 prompt, before the interviewer smoke test. D12's choice of Qwen is confirmed or revised on those results. | D23 changes the interpreter prompt, so the D12 measurements no longer apply; the orchestrator expects the model to matter most on vague answers. |
 | D26 | Catalog sourcing pass recorded in `docs/catalog-sources.md`: A2, A3 and F2 strongly supported; A1 and F5 moderately; F1 and F3 documented in teaching materials only; F4 weakly. Answer keys are not yet validated against real students. | Grounds the catalog for the reports and identifies which entries need a library check (Sorva 2012 Appendix A; Kallia & Sentance 2019) and which probes to add (an expression-based A1 probe). |
+| D27 | **Proposed, awaiting orchestrator approval (2026-11-10):** when the classified answer matches one or more misconceptions' answer keys, an explanation's labels are scored only for those misconceptions; for a correct or unexpected answer, all of the probe's relevant misconceptions are scored (replaces the scope in D21). | Found by the implementer (`docs/implementer-notes.md`): a student holding two misconceptions on one probe (P01: A1 and A2; P03: A2 and A3) answers and explains with the first, so the D21 rule counted the unmentioned second one as evidence against it. Offline test on 500 students (5 seeds x 100): exact match 0.770 -> 0.788 and Brier 0.0298 -> 0.0264 (better than information gain alone, 0.762 / 0.0278). |
 
 ## First results
 
@@ -46,3 +47,10 @@ Owner (design authority): Suzanne Szabo. Recorded 2026-11-03.
   every later call had the ~1,095-token (Qwen) or ~872-token (Gemma) prefix served from cache, 88-90% of
   all prompt tokens. Caveat: the explanations were written by the catalog's author and are cleaner than
   real student writing, so this set is too easy to separate the models well; a harder set is planned for the week ending Nov 19 (D13).
+- Week-2 offline comparison, 500 simulated students (seeds 1, 2, 3, 7, 11 x 100), slip 0.15, informative
+  confidence, 15% hedged answers, oracle interpreter at the D13 rates: information gain alone 0.762 exact
+  (Brier 0.0278, 8.6 probes); with explanations under D21 0.770 (0.0298, 7.8); under the proposed D27
+  0.788 (0.0264, 7.9). Explanations make sessions confident sooner and also more often confidently wrong
+  (stopped DIAGNOSED with a wrong set: 11.8% of students without explanations, 19.4% / 17.2% with them).
+  Week-3 question: stricter stopping, weaker "label absent" evidence, or a minimum number of probes per
+  misconception.

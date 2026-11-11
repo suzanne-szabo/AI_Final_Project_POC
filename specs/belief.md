@@ -32,10 +32,15 @@ The week-1 fixed slip of 0.10 gives 18.
 ## 3. Explanation evidence (D13, D21)
 
 ```python
-def update_explanation(self, probe, labels: Iterable[str], sensitivity: float, false_alarm: float) -> None
+def update_explanation(self, probe, labels: Iterable[str], sensitivity: float, false_alarm: float,
+                       scope: Iterable[str] | None = None) -> None
 ```
 
-For each misconception `m` in the probe's relevant set (the ids in `probe.keys`), and each profile `p`:
+The **scored set** is the probe's relevant misconceptions (the ids in `probe.keys`), narrowed to `scope`
+when `scope` is given (D27). Unknown ids in `scope`, or a `scope` with no id in `probe.keys`, raise
+`ValueError`.
+
+For each misconception `m` in the scored set, and each profile `p`:
 
 | `m` in `labels` | `m` in `p` | Likelihood factor |
 |---|---|---|
@@ -44,11 +49,11 @@ For each misconception `m` in the probe's relevant set (the ids in `probe.keys`)
 | no | yes | `1 - sensitivity` |
 | no | no | `1 - false_alarm` |
 
-The profile's likelihood is the product of these factors over the relevant set; the weights are then
+The profile's likelihood is the product of these factors over the scored set; the weights are then
 multiplied and renormalized (with `math.fsum`).
 
-- Labels that are not in the probe's relevant set are **ignored** (D21). The caller records them.
-- An empty `labels` list is still evidence: it lowers the probability of each relevant misconception.
+- Labels that are not in the scored set are **ignored** (D21, D27). The caller records them.
+- An empty `labels` list is still evidence: it lowers the probability of each scored misconception.
 - Unknown ids raise `ValueError`.
 - `0 < false_alarm < sensitivity < 1` is required; otherwise `ValueError`.
 
