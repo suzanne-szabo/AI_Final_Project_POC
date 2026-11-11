@@ -82,9 +82,11 @@ Passing the scripted fake chat model (`tests/fakes.py`, as in HW-09) makes a ses
 - The catalog: one line per id with its `summary`.
 - Process: start with `rank_probes`; usually ask the top-ranked probe, and choose a lower-ranked one only
   for a stated reason (for example, to settle an assignment misconception before a function one that
-  depends on it); after an answer that matches a misconception, an unexpected answer, or a confidence of
-  2 or lower, consider `ask_explanation`; call `submit_diagnosis` when the status says the belief is
-  confident or the probe budget is spent.
+  depends on it); call `ask_explanation` right after an answer that matches a misconception, an
+  unexpected answer, or any answer with confidence 2 or lower, because the explanation separates a real
+  belief from a careless slip; do **not** ask after a correct answer given with confidence 3 or higher,
+  because it rarely reveals anything and spends the limited explanation budget (D30); call
+  `submit_diagnosis` when the status says the belief is confident or the probe budget is spent.
 - Rules: exactly one tool call per turn; never reply with text only; do not assume what the student
   believes beyond the observations; the student sees only the programs.
 

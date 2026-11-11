@@ -38,9 +38,11 @@ Process:
 1. Start with rank_probes.
 2. Usually ask the top-ranked probe. Choose a lower-ranked one only for a reason you state, for \
 example to settle an assignment misconception before a function misconception that depends on it.
-3. After an answer that matches a misconception, an unexpected answer, or a confidence of 2 or lower, \
-consider ask_explanation.
-4. Call submit_diagnosis when the status says the belief is confident or the probe budget is spent. It \
+3. Call ask_explanation right after an answer that matches a misconception, an unexpected answer, or any \
+answer with confidence 2 or lower: the explanation separates a real belief from a careless slip.
+4. Do not call ask_explanation after a correct answer given with confidence 3 or higher. It rarely \
+reveals anything, and explanations are limited.
+5. Call submit_diagnosis when the status says the belief is confident or the probe budget is spent. It \
 is rejected before then.
 
 Rules:

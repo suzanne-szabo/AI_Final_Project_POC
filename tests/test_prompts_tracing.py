@@ -103,3 +103,11 @@ def test_tracing_off_or_false_gives_identical_sessions(monkeypatch):
     assert json.dumps(a.trace, sort_keys=True) == json.dumps(b.trace, sort_keys=True)
     assert a.trace[0]["tracing"]["langsmith"] is False
     assert "api_key" not in json.dumps(a.trace[0]).lower()
+
+
+def test_explanation_guidance_is_explicit():
+    """D30: ask after a misconception, unexpected or low-confidence answer; not after a confident correct one."""
+    text = " ".join(prompts.SYSTEM_PROMPT.split())
+    assert "Call ask_explanation right after an answer that matches a misconception" in text
+    assert "Do not call ask_explanation after a correct answer given with confidence 3 or higher" in text
+    assert "consider ask_explanation" not in text
