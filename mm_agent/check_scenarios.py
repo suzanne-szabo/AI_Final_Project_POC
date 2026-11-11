@@ -91,8 +91,8 @@ def _confident_actions(config: Config) -> list[tuple[str, dict]]:
     actions: list[tuple[str, dict]] = [("rank_probes", {})]
     while not session.belief.is_confident(config.low, config.high):
         probe_id = rank_probes(session.belief, session.unasked())[0][0].id
-        probe_controller.handle("ask_probe", {"probe_id": probe_id})
-        actions.append(("ask_probe", {"probe_id": probe_id}))
+        probe_controller.handle("ask_probe", {"probe_id": probe_id, "reason": "top-ranked probe"})
+        actions.append(("ask_probe", {"probe_id": probe_id, "reason": "top-ranked probe"}))
     return actions
 
 
@@ -107,27 +107,27 @@ def build_scenarios() -> list[Scenario]:
         ("S1", "Session start", "rank_probes, or ask_probe with the top-ranked probe",
          [], _student(), default, _probing),
         ("S2", "Last answer matches a misconception, confidence 5", "ask_explanation",
-         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07"})], _student(P07=Response("6", 5)), default,
+         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07", "reason": "test"})], _student(P07=Response("6", 5)), default,
          lambda tool, ok: ok and tool == "ask_explanation"),
         ("S3", "Last answer was unexpected", "ask_explanation",
-         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07"})], _student(P07=Response("12", 3)), default,
+         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07", "reason": "test"})], _student(P07=Response("12", 3)), default,
          lambda tool, ok: ok and tool == "ask_explanation"),
         ("S4", "Belief confident", "submit_diagnosis",
          _confident_actions(default), _student(), default,
          lambda tool, ok: ok and tool == "submit_diagnosis"),
         ("S5", "Two probes asked, not confident", "anything except submit_diagnosis",
-         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07"}), ("ask_probe", {"probe_id": "P01"})],
+         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07", "reason": "test"}), ("ask_probe", {"probe_id": "P01", "reason": "test"})],
          _student(P07=Response("6", 2), P01=Response("7 5", 3)), default,
          lambda tool, ok: ok and tool != "submit_diagnosis"),
         ("S6", "Probe budget spent (max_probes=3)", "submit_diagnosis",
-         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07"}), ("ask_probe", {"probe_id": "P01"}),
-          ("ask_probe", {"probe_id": "P10"})],
+         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07", "reason": "test"}), ("ask_probe", {"probe_id": "P01", "reason": "test"}),
+          ("ask_probe", {"probe_id": "P10", "reason": "test"})],
          _student(P07=Response("6", 2), P01=Response("7 7", 2), P10=Response("42", 1)), Config(max_probes=3),
          lambda tool, ok: ok and tool == "submit_diagnosis"),
         ("S7", "Last answer correct, confidence 5", "rank_probes or ask_probe",
-         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07"})], _student(), default, _probing),
+         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07", "reason": "test"})], _student(), default, _probing),
         ("S8", "Previous call was rejected (probe already asked)", "an accepted call",
-         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07"}), ("ask_probe", {"probe_id": "P07"})],
+         [("rank_probes", {}), ("ask_probe", {"probe_id": "P07", "reason": "test"}), ("ask_probe", {"probe_id": "P07", "reason": "test"})],
          _student(P07=Response("5", 4)), default,
          lambda tool, ok: ok),
     ]

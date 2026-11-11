@@ -48,6 +48,15 @@ def run_policy_session(student, decider: str, config: Config, interpreter=None, 
                                **run_extra(metadata))
 
 
+# D32: ask_probe requires a reason; the code deciders give a fixed one that names their rule.
+POLICY_REASONS = {
+    "fixed": "next probe in the fixed bank order",
+    "shuffled": "next probe in this session's shuffled order",
+    "eig": "top-ranked probe by expected information gain",
+    "eig_explain": "top-ranked probe by expected information gain",
+}
+
+
 @traceable(run_type="chain", name="run_policy_session")
 def _run_policy_session(student, decider, config, interpreter, session_id, seed, shuffle_rng, models):
     session = Session.new(student, interpreter, config, session_id=session_id, decider=decider,
@@ -59,7 +68,7 @@ def _run_policy_session(student, decider, config, interpreter, session_id, seed,
         rng.shuffle(order)
     while True:
         probe_id = _next_probe(decider, session, order)
-        obs = controller.handle("ask_probe", {"probe_id": probe_id})
+        obs = controller.handle("ask_probe", {"probe_id": probe_id, "reason": POLICY_REASONS[decider]})
         if (decider == "eig_explain" and obs.accepted and obs.data["answer_matches"] != ["correct"]
                 and len(session.explained) < config.max_explanations):
             controller.handle("ask_explanation", {})

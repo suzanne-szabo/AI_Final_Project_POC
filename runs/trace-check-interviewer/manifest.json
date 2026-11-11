@@ -1,0 +1,55 @@
+{
+  "command": "python -m mm_agent.run --deciders interviewer --interviewer-model Qwen3.8-Flash-Next --interpreter llm --students 3 --seed 7 --out runs/trace-check-interviewer",
+  "config": {
+    "high": 0.85,
+    "interpreter_false_alarm": 0.05,
+    "interpreter_sensitivity": 0.85,
+    "low": 0.15,
+    "max_consecutive_rejections": 3,
+    "max_explanations": 5,
+    "max_probes": 10,
+    "max_steps": 30,
+    "model_slip": 0.1,
+    "prior": 0.2,
+    "rank_k": 3,
+    "slip_by_confidence": {
+      "1": 0.35,
+      "2": 0.2,
+      "3": 0.1,
+      "4": 0.06,
+      "5": 0.04
+    },
+    "use_confidence": true
+  },
+  "ended": "2026-11-11T16:31:28",
+  "git_commit": "24fb63ed21b4f8cb8348aa5fbe3a1762eaf11a1f",
+  "models": {
+    "interpreter": "Qwen3.8-Flash-Next",
+    "interviewer": "Qwen3.8-Flash-Next",
+    "student": null
+  },
+  "options": {
+    "confidence_mode": "informative",
+    "deciders": [
+      "interviewer"
+    ],
+    "interpreter": "llm",
+    "interpreter_model": "Qwen3.8-Flash-Next",
+    "interviewer_model": "Qwen3.8-Flash-Next",
+    "max_probes": 10,
+    "no_use_confidence": false,
+    "out": "runs/trace-check-interviewer",
+    "rate": 0.2,
+    "seed": 7,
+    "student": "bank",
+    "student_model": null,
+    "student_slip": 0.15,
+    "students": 3,
+    "vague_answer_rate": 0.15
+  },
+  "started": "2026-11-11T16:29:02",
+  "tracing": {
+    "langsmith": true,
+    "project": "mental-model-agent"
+  }
+}

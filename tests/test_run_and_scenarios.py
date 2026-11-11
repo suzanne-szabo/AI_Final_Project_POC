@@ -82,3 +82,16 @@ def test_scenario_expectations():
     assert s["S6"].expected("submit_diagnosis", True) and not s["S6"].expected("ask_probe", False)
     assert s["S7"].expected("ask_probe", True) and not s["S7"].expected("ask_explanation", True)
     assert s["S8"].expected("rank_probes", True) and not s["S8"].expected("ask_probe", False)
+
+
+def test_main_reads_dotenv_for_offline_runs(tmp_path, monkeypatch):
+    """Offline runs must also pick up .env (LangSmith settings); existing variables win."""
+    import mm_agent.config as config
+    (tmp_path / ".env").write_text("MM_DOTENV_MARKER=from-file\nLANGSMITH_TRACING=true\n")
+    monkeypatch.setattr(config, "ROOT", tmp_path)
+    monkeypatch.delenv("MM_DOTENV_MARKER", raising=False)
+    monkeypatch.setenv("LANGSMITH_TRACING", "false")
+    assert main(["--deciders", "eig", "--students", "1", "--out", str(tmp_path / "o")]) == 0
+    import os
+    assert os.environ["MM_DOTENV_MARKER"] == "from-file"
+    assert os.environ["LANGSMITH_TRACING"] == "false"

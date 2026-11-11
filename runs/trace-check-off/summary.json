@@ -1,0 +1,56 @@
+{
+  "eig_explain": {
+    "brier": 0.0013479383333333326,
+    "budget_rate": 0.0,
+    "confident_wrong_rate": 0.0,
+    "diagnosed_rate": 1.0,
+    "error_rate_by_kind": {},
+    "exact_match": 1.0,
+    "mean_explanations": 3.3333333333333335,
+    "mean_probes": 7.333333333333333,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "A2_REVERSED": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 2
+      },
+      "F2_PARAM_LINKED": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 2
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      }
+    },
+    "sessions": 3,
+    "step_limit_rate": 0.0
+  }
+}

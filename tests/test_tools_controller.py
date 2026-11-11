@@ -73,7 +73,7 @@ def test_rank_probes():
                                            (Response("banana", 2), ["unexpected"]), (Response("maybe 6?", 1), [F2])])
 def test_ask_probe(given, matches):
     session, c = make(student(P07=given))
-    obs = c.handle("ask_probe", {"probe_id": "P07"})
+    obs = c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     assert obs.accepted
     d = obs.data
     assert d["probe_id"] == "P07" and d["answer"] == given.answer and d["confidence"] == given.confidence
@@ -84,8 +84,8 @@ def test_ask_probe(given, matches):
 def test_confidence_is_used_only_when_configured():
     s1, c1 = make(student(P07=Response("6", 5)))
     s2, c2 = make(student(P07=Response("6", 5)), config=Config(use_confidence=False))
-    c1.handle("ask_probe", {"probe_id": "P07"})
-    c2.handle("ask_probe", {"probe_id": "P07"})
+    c1.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
+    c2.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     assert s1.belief.marginals()[F2] == pytest.approx(0.92, abs=0.01)
     assert s2.belief.marginals()[F2] == pytest.approx(0.82, abs=0.01)
 
@@ -93,7 +93,7 @@ def test_confidence_is_used_only_when_configured():
 def test_ask_explanation_applies_relevant_labels_only():
     interp = FixedInterpreter(ev([F2, A1]))
     session, c = make(student(P07=Response("6", 5)), interp)
-    c.handle("ask_probe", {"probe_id": "P07"})
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     before = session.belief.marginals()[F2]
     obs = c.handle("ask_explanation", {})
     assert obs.accepted
@@ -107,7 +107,7 @@ def test_ask_explanation_applies_relevant_labels_only():
 @pytest.mark.parametrize("evidence", [ev([], informative=False), ev([F2], valid=False)])
 def test_uninformative_or_failed_explanation_leaves_belief_unchanged(evidence):
     session, c = make(student(P07=Response("6", 5)), FixedInterpreter(evidence))
-    c.handle("ask_probe", {"probe_id": "P07"})
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     before = list(session.belief.weights)
     obs = c.handle("ask_explanation", {})
     assert obs.accepted and obs.data["belief_updated"] is False
@@ -131,7 +131,7 @@ def test_p2_unknown_tool():
     assert_rejected(c, session, "teach", {}, "P2")
 
 
-@pytest.mark.parametrize("tool,args", [("ask_probe", {"probe_id": "P99"}), ("ask_probe", {"probe_id": "P07", "x": 1}),
+@pytest.mark.parametrize("tool,args", [("ask_probe", {"probe_id": "P99", "reason": "r"}), ("ask_probe", {"probe_id": "P07", "reason": "r", "x": 1}),
                                        ("ask_probe", {}), ("rank_probes", {"k": 0}), ("rank_probes", {"k": 9}),
                                        ("submit_diagnosis", {"now": True})])
 def test_p3_bad_arguments(tool, args):
@@ -141,27 +141,27 @@ def test_p3_bad_arguments(tool, args):
 
 def test_p4_probe_already_asked():
     session, c = make()
-    c.handle("ask_probe", {"probe_id": "P07"})
-    assert_rejected(c, session, "ask_probe", {"probe_id": "P07"}, "P4")
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
+    assert_rejected(c, session, "ask_probe", {"probe_id": "P07", "reason": "r"}, "P4")
 
 
 def test_p5_probe_budget():
     session, c = make(config=Config(max_probes=1))
-    c.handle("ask_probe", {"probe_id": "P07"})
-    obs = assert_rejected(c, session, "ask_probe", {"probe_id": "P01"}, "P5")
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
+    obs = assert_rejected(c, session, "ask_probe", {"probe_id": "P01", "reason": "r"}, "P5")
     assert "submit_diagnosis" in obs.message
 
 
 def test_p6_explanation_rules():
     session, c = make(interpreter=FixedInterpreter(ev()), config=Config(max_explanations=1))
     assert_rejected(c, session, "ask_explanation", {}, "P6")            # no probe yet
-    c.handle("ask_probe", {"probe_id": "P07"})
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     assert c.handle("ask_explanation", {}).accepted
     assert_rejected(c, session, "ask_explanation", {}, "P6")            # already explained
-    c.handle("ask_probe", {"probe_id": "P01"})
+    c.handle("ask_probe", {"probe_id": "P01", "reason": "r"})
     assert_rejected(c, session, "ask_explanation", {}, "P6")            # budget spent
     s2, c2 = make(interpreter=None)
-    c2.handle("ask_probe", {"probe_id": "P07"})
+    c2.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     assert_rejected(c2, s2, "ask_explanation", {}, "P6")                # no interpreter
 
 
@@ -178,7 +178,7 @@ def test_diagnosed_and_budget_terminals():
     assert t.reason == "DIAGNOSED" and t.error_kind is None
     assert session.estimate is not None
     s2, c2 = make(config=Config(max_probes=1))
-    c2.handle("ask_probe", {"probe_id": "P07"})
+    c2.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     assert c2.handle("submit_diagnosis", {}).accepted
     assert c2.check_terminal().reason == "BUDGET"
 
@@ -259,9 +259,9 @@ def test_observation_shape():
 def test_trace_and_result():
     stu = student(P07=Response("6", 5))
     session, c = make(stu, FixedInterpreter(ev([F2])), config=Config(max_probes=2))
-    c.handle("ask_probe", {"probe_id": "P07"})
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     c.handle("ask_explanation", {})
-    c.handle("ask_probe", {"probe_id": "P01"})
+    c.handle("ask_probe", {"probe_id": "P01", "reason": "r"})
     c.handle("submit_diagnosis", {})
     c.check_terminal()
     result = c.result()
@@ -284,13 +284,13 @@ def test_trace_and_result():
 def test_explanation_scope_follows_the_matched_answer():
     """D27: an answer matching A1's key on P01 scores only A1; a correct answer scores A1 and A2."""
     s1, c1 = make(student(P01=Response("7 7", 5)), FixedInterpreter(ev([A1])))
-    c1.handle("ask_probe", {"probe_id": "P01"})
+    c1.handle("ask_probe", {"probe_id": "P01", "reason": "r"})
     a2_before = s1.belief.marginals()["A2_REVERSED"]
     d = c1.handle("ask_explanation", {}).data
     assert d["scored"] == [A1] and d["applied_labels"] == [A1]
     assert s1.belief.marginals()["A2_REVERSED"] == pytest.approx(a2_before)
     s2, c2 = make(student(), FixedInterpreter(ev([])))
-    c2.handle("ask_probe", {"probe_id": "P01"})
+    c2.handle("ask_probe", {"probe_id": "P01", "reason": "r"})
     a2 = s2.belief.marginals()["A2_REVERSED"]
     d2 = c2.handle("ask_explanation", {}).data
     assert d2["scored"] == ["A1_LINKED", "A2_REVERSED"]
@@ -299,20 +299,21 @@ def test_explanation_scope_follows_the_matched_answer():
 
 def test_off_scope_labels_are_ignored_not_applied():
     s, c = make(student(P01=Response("7 7", 5)), FixedInterpreter(ev([A1, "A2_REVERSED"])))
-    c.handle("ask_probe", {"probe_id": "P01"})
+    c.handle("ask_probe", {"probe_id": "P01", "reason": "r"})
     d = c.handle("ask_explanation", {}).data
     assert d["applied_labels"] == [A1] and d["ignored_labels"] == ["A2_REVERSED"]
 
 
-def test_ask_probe_reason_is_optional_and_kept_in_the_trace():
-    """D31: an optional reason (1-200 chars) is accepted and recorded; it does not change the effect."""
+def test_ask_probe_reason_is_required_and_kept_in_the_trace():
+    """D31/D32: a reason (1-200 chars) is required and recorded; it does not change the effect."""
     defs = {d["function"]["name"]: d for d in tool_definitions()}
     props = defs["ask_probe"]["function"]["parameters"]["properties"]
-    assert props["reason"]["maxLength"] == 200 and defs["ask_probe"]["function"]["parameters"]["required"] == ["probe_id"]
+    assert props["reason"]["maxLength"] == 200
+    assert defs["ask_probe"]["function"]["parameters"]["required"] == ["probe_id", "reason"]
     s1, c1 = make(student(P07=Response("6", 5)))
     s2, c2 = make(student(P07=Response("6", 5)))
     obs = c1.handle("ask_probe", {"probe_id": "P07", "reason": "settle F2 before the return probes"})
-    c2.handle("ask_probe", {"probe_id": "P07"})
+    c2.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     assert obs.accepted and s1.belief.weights == s2.belief.weights
     call = [r for r in c1.trace if r["kind"] == "call"][-1]
     assert call["args"]["reason"] == "settle F2 before the return probes"
@@ -322,3 +323,10 @@ def test_ask_probe_reason_is_optional_and_kept_in_the_trace():
 def test_bad_reason_is_p3(reason):
     session, c = make()
     assert_rejected(c, session, "ask_probe", {"probe_id": "P07", "reason": reason}, "P3")
+
+
+def test_missing_reason_is_p3_and_names_the_field():
+    """D32: an ask_probe without a reason is a schema rejection; the message tells the model what is missing."""
+    session, c = make()
+    obs = assert_rejected(c, session, "ask_probe", {"probe_id": "P07"}, "P3")
+    assert "reason" in obs.message

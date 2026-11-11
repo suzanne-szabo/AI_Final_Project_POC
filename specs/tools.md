@@ -28,9 +28,11 @@ Status: Draft v1 (2026-11-09).
 
 ### 2.2 `ask_probe`
 - **Arguments:** `probe_id: str` (pattern `^P\d{2}$`, must exist in the bank).
-  Optional `reason: str` (1–200 characters, D31): why this probe was chosen. The interviewer gives it
-  when it skips the top-ranked probe. It does not change the effect; it is kept in the trace (the `call`
-  record's `args`) and, when tracing is on, in LangSmith.
+  Required `reason: str` (1–200 characters; D31, required since D32): why this probe was chosen. When the
+  interviewer skips the top-ranked probe, the reason says why. A missing or invalid reason is a P3 schema
+  rejection. The code deciders pass a fixed reason naming their rule (`policies.POLICY_REASONS`). It does
+  not change the effect; it is kept in the trace (the `call` record's `args`) and, when tracing is on, in
+  LangSmith.
 - **Effect:** `response = student.answer(probe)`; `option = probe.classify(strip_hedges(response.answer))`;
   `belief.update(probe, option, response.confidence if config.use_confidence else None,
   config.slip_by_confidence)`. Records the probe as asked and as the session's *last probe*.

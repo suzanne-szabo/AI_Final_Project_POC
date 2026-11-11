@@ -131,6 +131,8 @@ python -m mm_agent.run --deciders eig eig_explain [interviewer] --students 100 -
   Every decider faces freshly built, identically seeded students.
 - **Defaults:** `--interpreter oracle`, `--student bank`, `--confidence-mode informative`; model names
   default to D12 for the interpreter and are required for `interviewer` and `--student llm`.
+- **Settings:** `main` reads `.env` first, for every run (offline too), without overriding variables that
+  are already set, so the LangSmith variables apply to offline runs as well (fix found 2026-11-11).
 - **Exit codes:** `main(argv) -> int` returns 0 on success; invalid options return 2 after printing a message (it does not raise).
 - **Rejected combinations (exit code 2 with a message):** `interviewer` without `--interviewer-model`;
   `eig_explain` or `interviewer` with `--interpreter none`; `--student llm` with `--interpreter oracle`;

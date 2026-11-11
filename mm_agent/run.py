@@ -17,6 +17,8 @@ and `DIR/manifest.json`. `main(argv)` returns 0 on success and 2 (with a message
 
 from __future__ import annotations
 
+import mm_agent.config as config_module
+
 import argparse
 import json
 import random
@@ -212,6 +214,7 @@ def run(args, argv: list[str]) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    config_module.load_settings()   # read .env for every run, so LANGSMITH_* also apply offline (specs/agent.md §6)
     parser = build_parser()
     try:
         args = parser.parse_args(argv)

@@ -79,3 +79,14 @@ def test_policies_never_get_rejected_and_are_deterministic(decider):
     assert all(c["accepted"] for c in calls(a))
     assert json.dumps(a.trace, sort_keys=True) == json.dumps(b.trace, sort_keys=True)
     assert a.trace[0]["decider"] == decider and a.trace[0]["planted"] == ["F2_PARAM_LINKED"]
+
+
+def test_code_deciders_give_their_rule_as_the_reason():
+    """D32: policy sessions pass a fixed reason naming the decider's rule; it is in every ask_probe call."""
+    for decider in ("fixed", "shuffled", "eig", "eig_explain"):
+        r = run_policy_session(bank_student("s", frozenset({"F2_PARAM_LINKED"}), 2), decider, Config(), seed=2,
+                               interpreter=OracleInterpreter(EXPL, 0.85, 0.05, random.Random(2)))
+        probes = [c for c in calls(r) if c["tool"] == "ask_probe"]
+        assert probes and all(c["accepted"] for c in probes), decider
+        reasons = {c["args"]["reason"] for c in probes}
+        assert len(reasons) == 1 and len(reasons.pop()) <= 200, decider

@@ -36,8 +36,8 @@ explanation updates the belief.
 
 Process:
 1. Start with rank_probes.
-2. Usually ask the top-ranked probe. If you choose a lower-ranked one, say why in ask_probe's reason \
-argument, for example to settle an assignment misconception before a function misconception that \
+2. Usually ask the top-ranked probe. Every ask_probe needs a reason: one short sentence on why this \
+probe. If you choose a lower-ranked one, the reason must say why you skipped the top one, for example to settle an assignment misconception before a function misconception that \
 depends on it.
 3. Call ask_explanation right after an answer that matches a misconception, an unexpected answer, or any \
 answer with confidence 2 or lower: the explanation separates a real belief from a careless slip.

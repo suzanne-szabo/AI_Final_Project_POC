@@ -46,7 +46,7 @@ def events(result):
 
 def test_full_session_ends_diagnosed():
     model, result = run([reply(tool_call("rank_probes", {"k": 3})),
-                         reply(tool_call("ask_probe", {"probe_id": "P07"})),
+                         reply(tool_call("ask_probe", {"probe_id": "P07", "reason": "r"})),
                          reply(tool_call("ask_explanation")),
                          reply(tool_call("submit_diagnosis"))])
     assert result.terminal == "DIAGNOSED"
@@ -59,7 +59,7 @@ def test_full_session_ends_diagnosed():
 
 
 def test_prompt_layout_status_last_and_history_append_only():
-    model, _ = run([reply(tool_call("rank_probes")), reply(tool_call("ask_probe", {"probe_id": "P07"})),
+    model, _ = run([reply(tool_call("rank_probes")), reply(tool_call("ask_probe", {"probe_id": "P07", "reason": "r"})),
                     reply(tool_call("submit_diagnosis"))])
     first, second, third = model.sent
     for sent in model.sent:
@@ -80,7 +80,7 @@ def test_model_is_bound_with_forced_single_tool_calls():
 
 
 def test_every_tool_call_gets_exactly_one_tool_message_and_extra_calls_are_p8():
-    model, result = run([reply(tool_call("rank_probes", call_id="c1"), tool_call("ask_probe", {"probe_id": "P07"}, "c2")),
+    model, result = run([reply(tool_call("rank_probes", call_id="c1"), tool_call("ask_probe", {"probe_id": "P07", "reason": "r"}, "c2")),
                          reply(tool_call("submit_diagnosis", call_id="c3"))])
     last = model.sent[-1]
     asked = [tc["id"] for m in last if isinstance(m, AIMessage) for tc in m.tool_calls]

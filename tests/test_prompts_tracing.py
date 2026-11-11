@@ -53,7 +53,7 @@ def test_status_message_basics():
     msg = prompts.status_message(s, c)
     assert "Step 1 of 30." in msg and "Probes used 0 of 10." in msg and "Explanations used 0 of 5." in msg
     assert "Belief confident: no." in msg
-    c.handle("ask_probe", {"probe_id": "P07"})
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     c.begin_step()
     msg = prompts.status_message(s, c)
     assert "F2_PARAM_LINKED 0.48" in msg and "Last probe: P07 (explanation available)." in msg
@@ -62,7 +62,7 @@ def test_status_message_basics():
 def test_status_message_budget_and_last_step():
     s, c = make(config=Config(max_probes=1))
     c.begin_step()
-    c.handle("ask_probe", {"probe_id": "P07"})
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
     c.begin_step()
     assert "The probe budget is spent: call submit_diagnosis." in prompts.status_message(s, c)
     s2, c2 = make(config=Config(max_steps=1))
@@ -113,6 +113,7 @@ def test_explanation_guidance_is_explicit():
     assert "consider ask_explanation" not in text
 
 
-def test_prompt_asks_for_a_reason_when_skipping_the_top_probe():
+def test_prompt_asks_for_a_reason_with_every_probe():
     text = " ".join(prompts.SYSTEM_PROMPT.split())
-    assert "say why in ask_probe's reason argument" in text
+    assert "Every ask_probe needs a reason" in text
+    assert "say why you skipped the top one" in text
