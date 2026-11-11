@@ -80,9 +80,9 @@ Passing the scripted fake chat model (`tests/fakes.py`, as in HW-09) makes a ses
 - Role: find out how a beginning student thinks Python executes function calls, by asking short
   tracing questions. The result is a hypothesis about the student's mental model, not a grade.
 - The catalog: one line per id with its `summary`.
-- Process: start with `rank_probes`; usually ask the top-ranked probe, and choose a lower-ranked one only
-  for a stated reason (for example, to settle an assignment misconception before a function one that
-  depends on it); call `ask_explanation` right after an answer that matches a misconception, an
+- Process: start with `rank_probes`; usually ask the top-ranked probe; when choosing a lower-ranked one,
+  state why in `ask_probe`'s `reason` argument (D31; for example, to settle an assignment misconception
+  before a function one that depends on it); call `ask_explanation` right after an answer that matches a misconception, an
   unexpected answer, or any answer with confidence 2 or lower, because the explanation separates a real
   belief from a careless slip; do **not** ask after a correct answer given with confidence 3 or higher,
   because it rarely reveals anything and spends the limited explanation budget (D30); call

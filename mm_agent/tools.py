@@ -37,6 +37,7 @@ class RankProbesArgs(_Args):
 
 class AskProbeArgs(_Args):
     probe_id: str = Field(pattern=r"^P\d{2}$")
+    reason: str | None = Field(default=None, min_length=1, max_length=200)   # D31: kept in the trace only
 
     @field_validator("probe_id")
     @classmethod
@@ -81,7 +82,10 @@ _DEFINITIONS: list[dict] = json.loads(json.dumps([
                 "Show the student one probe program and record their predicted output and confidence. "
                 "Updates the belief.",
                 {"probe_id": {"type": "string", "pattern": r"^P\d{2}$",
-                              "description": "A probe id such as P07 that has not been asked yet."}},
+                              "description": "A probe id such as P07 that has not been asked yet."},
+                 "reason": {"type": "string", "minLength": 1, "maxLength": 200,
+                            "description": "Why you chose this probe. Required in practice when it is not "
+                                           "the top-ranked probe."}},
                 ["probe_id"]),
     _definition("ask_explanation",
                 "Ask the student to explain their answer to the last probe. The explanation is "

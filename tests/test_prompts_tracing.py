@@ -111,3 +111,8 @@ def test_explanation_guidance_is_explicit():
     assert "Call ask_explanation right after an answer that matches a misconception" in text
     assert "Do not call ask_explanation after a correct answer given with confidence 3 or higher" in text
     assert "consider ask_explanation" not in text
+
+
+def test_prompt_asks_for_a_reason_when_skipping_the_top_probe():
+    text = " ".join(prompts.SYSTEM_PROMPT.split())
+    assert "say why in ask_probe's reason argument" in text

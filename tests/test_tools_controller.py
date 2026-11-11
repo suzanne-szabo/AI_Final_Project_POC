@@ -302,3 +302,23 @@ def test_off_scope_labels_are_ignored_not_applied():
     c.handle("ask_probe", {"probe_id": "P01"})
     d = c.handle("ask_explanation", {}).data
     assert d["applied_labels"] == [A1] and d["ignored_labels"] == ["A2_REVERSED"]
+
+
+def test_ask_probe_reason_is_optional_and_kept_in_the_trace():
+    """D31: an optional reason (1-200 chars) is accepted and recorded; it does not change the effect."""
+    defs = {d["function"]["name"]: d for d in tool_definitions()}
+    props = defs["ask_probe"]["function"]["parameters"]["properties"]
+    assert props["reason"]["maxLength"] == 200 and defs["ask_probe"]["function"]["parameters"]["required"] == ["probe_id"]
+    s1, c1 = make(student(P07=Response("6", 5)))
+    s2, c2 = make(student(P07=Response("6", 5)))
+    obs = c1.handle("ask_probe", {"probe_id": "P07", "reason": "settle F2 before the return probes"})
+    c2.handle("ask_probe", {"probe_id": "P07"})
+    assert obs.accepted and s1.belief.weights == s2.belief.weights
+    call = [r for r in c1.trace if r["kind"] == "call"][-1]
+    assert call["args"]["reason"] == "settle F2 before the return probes"
+
+
+@pytest.mark.parametrize("reason", ["", "x" * 201, 7])
+def test_bad_reason_is_p3(reason):
+    session, c = make()
+    assert_rejected(c, session, "ask_probe", {"probe_id": "P07", "reason": reason}, "P3")
