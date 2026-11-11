@@ -1,0 +1,55 @@
+{
+  "command": "python -m mm_agent.run --deciders interviewer --interviewer-model Gemma-4-26B-A4B --interpreter llm --students 20 --seed 7 --out runs/smoke-2026-11-11-d30-gemma",
+  "config": {
+    "high": 0.85,
+    "interpreter_false_alarm": 0.05,
+    "interpreter_sensitivity": 0.85,
+    "low": 0.15,
+    "max_consecutive_rejections": 3,
+    "max_explanations": 5,
+    "max_probes": 10,
+    "max_steps": 30,
+    "model_slip": 0.1,
+    "prior": 0.2,
+    "rank_k": 3,
+    "slip_by_confidence": {
+      "1": 0.35,
+      "2": 0.2,
+      "3": 0.1,
+      "4": 0.06,
+      "5": 0.04
+    },
+    "use_confidence": true
+  },
+  "ended": "2026-11-11T15:32:32",
+  "git_commit": "3b8da26ed6b554a12c8ef8c60a4dece74199f7af",
+  "models": {
+    "interpreter": "Qwen3.8-Flash-Next",
+    "interviewer": "Gemma-4-26B-A4B",
+    "student": null
+  },
+  "options": {
+    "confidence_mode": "informative",
+    "deciders": [
+      "interviewer"
+    ],
+    "interpreter": "llm",
+    "interpreter_model": "Qwen3.8-Flash-Next",
+    "interviewer_model": "Gemma-4-26B-A4B",
+    "max_probes": 10,
+    "no_use_confidence": false,
+    "out": "runs/smoke-2026-11-11-d30-gemma",
+    "rate": 0.2,
+    "seed": 7,
+    "student": "bank",
+    "student_model": null,
+    "student_slip": 0.15,
+    "students": 20,
+    "vague_answer_rate": 0.15
+  },
+  "started": "2026-11-11T15:25:12",
+  "tracing": {
+    "langsmith": false,
+    "project": null
+  }
+}
