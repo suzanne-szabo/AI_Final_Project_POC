@@ -1,0 +1,63 @@
+{
+  "interviewer": {
+    "brier": 0.010973123562500001,
+    "budget_rate": 0.15,
+    "confident_wrong_rate": 0.05,
+    "diagnosed_rate": 0.85,
+    "error_rate_by_kind": {},
+    "exact_match": 0.9,
+    "interviewer": {
+      "cached_share": 0.7294388841837888,
+      "median_latency": 2.6245000000000003,
+      "model_calls_per_session": 17.2,
+      "rejections_per_session": 0.0,
+      "steps_per_session": 17.2
+    },
+    "mean_explanations": 3.2,
+    "mean_probes": 8.1,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 6
+      },
+      "A2_REVERSED": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 6
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 7
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 8
+      },
+      "F2_PARAM_LINKED": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 5
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 4
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 1.0,
+        "recall": 0.8333333333333334,
+        "support": 6
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": 0.6666666666666666,
+        "recall": 1.0,
+        "support": 2
+      }
+    },
+    "sessions": 20,
+    "step_limit_rate": 0.0
+  }
+}
