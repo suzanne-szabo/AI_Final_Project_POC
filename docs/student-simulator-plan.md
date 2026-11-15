@@ -56,6 +56,23 @@ agent's own model:
    text, only the planted profile. Two measures: (a) the share of explanations whose labels match the
    misconception that produced the answer, as a proxy; (b) a hand-labeled sample of about 30 explanations
    (by Suzanne) to check the proxy.
+5. **Ground the personas in real beginner talk (planned, D33; Suzanne, 2026-11-13).** Before writing the
+   persona and `style` prompts, read Stack Overflow questions and focused beginner subreddits (for example
+   r/learnpython and r/learnprogramming) where beginners ask about assignment, aliasing, parameters,
+   `return` vs. `print`, and locals. Use them as the basis for:
+   - **personalities**: how real beginners phrase answers and explanations (hedging, half-right
+     vocabulary such as "the variable points at", "it saves it", "it gets sent back"), how sure they sound,
+     and what they ask when confused;
+   - **questions**: realistic wrong predictions and explanations per misconception, as candidate probes,
+     new answer keys, or vague-explanation test cases for the interpreter;
+   - **catalog evidence**: real examples for the entries now supported only by teaching materials or
+     weakly (F1, F3, F4; D26), and possibly misconceptions the catalog lacks.
+
+   Rules for the collection: keep a source file (`docs/beginner-sources.md`) with the link, date, the
+   misconception it shows, and a short paraphrase. No usernames, and no long verbatim copies (Stack
+   Overflow content is CC BY-SA, so any short quote needs attribution). Read pages one at a time rather
+   than scraping (Reddit's terms restrict automated collection). Treat it as illustrative, not as
+   frequencies: people who post are a self-selected group.
 
 ## 4. How we will use it (evaluation week)
 
