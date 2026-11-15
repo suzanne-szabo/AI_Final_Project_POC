@@ -6,7 +6,7 @@
 # It compares the HW-11 baseline code (commit 3a00ed7, before D34) with the revised code (this working
 # tree) on the same seeded students, and compares the Qwen and Gemma interviewers. Every run writes its
 # own folder under runs/ with traces, summary and manifest. A failed run is logged and the script moves
-# on to the next one. Expected total: about 4 to 4.5 hours. Keep the laptop on power; `caffeinate -i`
+# on to the next one. Expected total: about 4 to 4.5 hours. The protocol these runs follow is docs/evaluation-protocol.md. Keep the laptop on power; `caffeinate -i`
 # stops macOS from sleeping while the script runs.
 #
 # Prompt cache: every run reuses one constant system prompt and tool list per role, so runs of the same
@@ -48,6 +48,11 @@ log "git: revised tree at $(git -C "$ROOT" rev-parse --short HEAD) (plus uncommi
 # --- 1. offline (no gateway, minutes): E1 adaptive vs fixed, E2 explanations and confidence ------------
 run "$ROOT" "eval-offline-500"            --deciders fixed shuffled eig eig_explain --students 500 --seed $SEED
 run "$ROOT" "eval-offline-500-noconf"     --deciders eig eig_explain --students 500 --seed $SEED --no-use-confidence
+# C6 robustness (docs/evaluation-protocol.md): the same students with no vague or hedged answers
+run "$ROOT" "eval-offline-500-novague"    --deciders eig eig_explain --students 500 --seed $SEED --vague-answer-rate 0
+
+# R6 unsupported input on the revised code (seconds; expected to end ERROR / MODEL_ERROR)
+run "$ROOT" "eval-unsupported" --deciders interviewer --interviewer-model NoSuchModel --students 1 --seed $SEED
 
 # --- 2. the refinement (D34) in isolation: same code decider, live interpreter, old vs new prompt -------
 run "$BASE" "eval-baseline-eigexplain-llm-$N" --deciders eig_explain --interpreter llm --students $N --seed $SEED

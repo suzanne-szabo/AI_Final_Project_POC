@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "cached_share": 0.906,
+    "calls": 60,
+    "command": "python scripts/check_students.py --model Gemma-4-26B-A4B --n 4",
+    "ended": "2026-11-15T14:34:00",
+    "explain": false,
+    "failures": 0,
+    "git_commit": "2082b83bbab9442440e9d0106af1358793a6dba7",
+    "model": "Gemma-4-26B-A4B",
+    "prompt_tokens": 80894,
+    "started": "2026-11-15T14:33:12",
+    "students": 4,
+    "style": "clear"
+  },
+  "summary": {
+    "answers": 60,
+    "belief_answers": 6,
+    "belief_fidelity": 0.833,
+    "belief_unexpected_rate": 0.0,
+    "invented_rate": 0.0,
+    "leak_rate": 0.167,
+    "mean_confidence_faithful_belief": 4.6,
+    "mean_confidence_leak": 5,
+    "mean_confidence_neutral": 4.94,
+    "neutral_accuracy": 1.0,
+    "neutral_answers": 54,
+    "neutral_unexpected_rate": 0.0,
+    "other_key_rate": 0.0,
+    "per_misconception": {
+      "A3_COPY_ON_ASSIGN": {
+        "answers": 2,
+        "fidelity": 1.0,
+        "leak": 0.0,
+        "unexpected": 0.0
+      },
+      "F1_RETURN_IS_PRINT": {
+        "answers": 2,
+        "fidelity": 1.0,
+        "leak": 0.0,
+        "unexpected": 0.0
+      },
+      "F2_PARAM_LINKED": {
+        "answers": 2,
+        "fidelity": 0.5,
+        "leak": 0.5,
+        "unexpected": 0.0
+      }
+    }
+  }
+}
