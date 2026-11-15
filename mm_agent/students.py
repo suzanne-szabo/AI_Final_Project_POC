@@ -355,6 +355,9 @@ Rules:
 (printed lines separated by newlines, or the word error if you think it crashes) and your confidence \
 from 1 (guessing) to 5 (certain).
 - When asked to explain an answer, call explain with 1-3 sentences in a student's own voice.
+- Your beliefs are simply what you think. You have never been told they might be wrong, so use them on \
+every program, even one that seems to test them, and do not correct yourself.
+- Talk like a beginner, not like a textbook, in the way the next message describes.
 - Never mention a list of beliefs, and never say you are an AI or role-playing."""
 
 STUDENT_TOOLS: list[dict] = [
@@ -391,10 +394,63 @@ class _Explain(BaseModel):
 _STUDENT_SCHEMAS = {"respond": _Respond, "explain": _Explain}
 
 
-def beliefs_message(profile: frozenset[str]) -> str:
-    """The only student-specific message: one belief per catalog id, in catalog order."""
-    lines = [CATALOG_BY_ID[m].summary if m in profile else CORRECT_BELIEFS[m] for m in IDS]
-    return "Your beliefs about how Python works:\n" + "\n".join(f"- {line}" for line in lines)
+def _cache_usage(reply) -> dict:
+    from mm_agent.interpret import cache_usage  # imported here: interpret imports nothing from students
+
+    return cache_usage(reply)
+
+
+# D35: held misconceptions are described as a beginner holds them, with wording taken from real
+# beginner questions (docs/beginner-sources.md). Each states the belief as the student's own conviction
+# and how they would put it; none reuses a probe's program.
+PERSONA_BELIEFS: dict[str, str] = {
+    "A1_LINKED": "You think `b = a` ties the two names together for good. You picked up that Python 'uses "
+                 "references', so after `b = a` the names point to the same thing, and if either one is later "
+                 "set to something new, the other one follows it.",
+    "A2_REVERSED": "You read `=` as 'these two are equal now', and you think the value moves from the left name "
+                   "into the right name: in `x = y`, x's value is copied into y, and x keeps its value.",
+    "A3_COPY_ON_ASSIGN": "You think `b = a` with a list gives b its own copy, like copying a file, and that "
+                         "passing a list into a function gives the function its own copy, since parameters are "
+                         "local. So a change made through one name never shows up through the other name.",
+    "F1_RETURN_IS_PRINT": "You think `return` and `print` do the same job: both put the answer out. A returned "
+                          "value shows up on the screen (you saw that in the Python shell), and a function that "
+                          "prints a value also gives that value back to whoever called it.",
+    "F2_PARAM_LINKED": "You think a parameter stays connected to the variable that was passed in. If the function "
+                       "sets the parameter to something new, the caller's variable changes too, because that is "
+                       "the variable you passed in.",
+    "F3_DEF_RUNS_BODY": "You think Python runs a function's body as soon as it reads the `def`, top to bottom like "
+                        "the rest of the file, and then runs it again each time the function is called.",
+    "F4_LOCALS_OUTLIVE_CALL": "You think variables made inside a function stick around after the call ends, so "
+                              "code after the call can still use them, as if the function saved them.",
+    "F5_RUNS_AFTER_RETURN": "You think `return` records the answer but the function keeps going: lines after a "
+                            "`return` still run, and if a later `return` is reached, that later value is the one "
+                            "the caller gets.",
+}
+
+# D35: how the student talks (docs/beginner-sources.md §2). The style changes wording and confidence,
+# never which answer the beliefs give.
+STYLES: dict[str, str] = {
+    "clear": "You explain in plain, complete sentences and say what you think the important lines do. Your "
+             "confidence matches how sure your beliefs make you feel.",
+    "terse": "You write very short answers and explanations: a few words, often lowercase, with little detail.",
+    "hedging": "You are unsure of yourself and say so. You use phrases like 'I think', 'maybe' or 'not sure', "
+               "and you rate your confidence low (1 to 3) even when you believe your answer.",
+}
+
+
+def beliefs_message(profile: frozenset[str], style: str | None = None) -> str:
+    """The only student-specific message: one belief per catalog id, in catalog order, then the style.
+
+    Held misconceptions use `PERSONA_BELIEFS` (D35); the others use `CORRECT_BELIEFS`. With a style,
+    one line describing how the student talks is added at the end.
+    """
+    if style is not None and style not in STYLES:
+        raise ValueError(f"unknown style {style!r}; expected one of {sorted(STYLES)}")
+    lines = [PERSONA_BELIEFS[m] if m in profile else CORRECT_BELIEFS[m] for m in IDS]
+    text = "Your beliefs about how Python works:\n" + "\n".join(f"- {line}" for line in lines)
+    if style is not None:
+        text += f"\n\nHow you talk: {STYLES[style]}"
+    return text
 
 
 class LLMStudent:
@@ -407,15 +463,19 @@ class LLMStudent:
 
     kind = "llm"
 
-    def __init__(self, id: str, profile: frozenset[str], model, max_retries: int = 1):
+    def __init__(self, id: str, profile: frozenset[str], model, max_retries: int = 1, style: str | None = None):
         from langchain_core.messages import HumanMessage, SystemMessage
 
         self.id = id
         self.profile = frozenset(profile)
+        self.style = style
         self.max_retries = max_retries
         self.failures = 0
+        self.calls = 0
+        self.usage: list[dict] = []  # one cache_usage record per model call (D8 check)
         self.bound = model.bind_tools(STUDENT_TOOLS, tool_choice="required", parallel_tool_calls=False)
-        self.messages: list = [SystemMessage(STUDENT_SYSTEM_PROMPT), HumanMessage(beliefs_message(self.profile))]
+        self.messages: list = [SystemMessage(STUDENT_SYSTEM_PROMPT),
+                               HumanMessage(beliefs_message(self.profile, style))]
         self._answers: dict[str, str] = {}
 
     def _turn(self, prompt: str, tool: str) -> BaseModel | None:
@@ -426,10 +486,12 @@ class LLMStudent:
         for attempt in range(self.max_retries + 1):
             if attempt:
                 self.messages.append(HumanMessage(f"Answer by calling the {tool} tool."))
+            self.calls += 1
             try:
                 reply = self.bound.invoke(list(self.messages))
             except Exception:  # a failed call counts like an invalid reply
                 continue
+            self.usage.append(_cache_usage(reply))
             self.messages.append(reply)
             calls = list(reply.tool_calls or [])
             parsed = None

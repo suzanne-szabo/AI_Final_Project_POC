@@ -60,6 +60,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--interviewer-model", default=None)
     parser.add_argument("--interpreter-model", default=DEFAULT_INTERPRETER_MODEL)
     parser.add_argument("--student-model", default=None)
+    parser.add_argument("--student-style", choices=("clear", "terse", "hedging", "mixed"), default=None,
+                        help="LLM students only (D35): how they talk; 'mixed' picks one per student from the seed")
     parser.add_argument("--max-probes", type=int, default=10)
     parser.add_argument("--out", type=Path, default=None)
     return parser
@@ -82,6 +84,8 @@ def check_options(args) -> None:
                          "are not in the bank (use --interpreter llm or none)")
     if args.student == "llm" and not args.student_model:
         raise UsageError("--student llm needs --student-model NAME")
+    if args.student_style and args.student != "llm":
+        raise UsageError("--student-style applies only to --student llm")
     uses_llm = "interviewer" in deciders or args.interpreter == "llm" or args.student == "llm"
     if uses_llm and not api_key_available():
         raise UsageError("this run calls the course gateway: set LLM_API_KEY in .env (see .env.example)")
@@ -157,7 +161,10 @@ def run(args, argv: list[str]) -> int:
         if args.student == "llm":
             from mm_agent.llm import make_model
 
-            return LLMStudent(sid, profile, make_model(args.student_model))
+            style = args.student_style
+            if style == "mixed":  # D35: deterministic per student, independent of decider order
+                style = random.Random(f"{args.seed}-{sid}-style").choice(("clear", "terse", "hedging"))
+            return LLMStudent(sid, profile, make_model(args.student_model), style=style)
         return BankStudent(sid, profile, args.student_slip, random.Random(f"{args.seed}-{sid}"), bank,
                            confidence_mode=args.confidence_mode, vague_answer_rate=args.vague_answer_rate)
 

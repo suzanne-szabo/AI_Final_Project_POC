@@ -73,6 +73,8 @@ def test_interpreter_test_sets():
         if not r["informative"]:
             assert r["labels"] == []
     assert {r["kind"] for r in vague} >= {"vague", "none", "mixed", "partly_wrong"}
+    slips = [r for r in vague if r["kind"] == "slip"]   # D34
+    assert len(slips) >= 8 and all(r["informative"] and r["labels"] == [] for r in slips)
     e22 = next(r for r in clean if r["id"] == "E22")
     assert e22["informative"] is False and e22["labels"] == []
 

@@ -50,6 +50,7 @@ def test_run_is_reproducible(tmp_path):
     ["--deciders", "eig_explain", "--interpreter", "none"],
     ["--deciders", "eig", "--student", "llm", "--student-model", "X", "--interpreter", "oracle"],
     ["--deciders", "eig_explain", "--interpreter", "llm"],
+    ["--deciders", "eig", "--student-style", "terse"],          # D35: style needs --student llm
 ])
 def test_rejected_combinations_return_2(argv, tmp_path, monkeypatch):
     monkeypatch.setenv("LLM_API_KEY", "")

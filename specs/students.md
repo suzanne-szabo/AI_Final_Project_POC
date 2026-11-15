@@ -117,8 +117,11 @@ mode exists so week 3 can measure how much the design depends on that assumption
 ## 4. `LLMStudent` (foundation for LLM vs. LLM runs; D18)
 
 ```python
-LLMStudent(id: str, profile: frozenset[str], model, max_retries: int = 1)
+LLMStudent(id: str, profile: frozenset[str], model, max_retries: int = 1, style: str | None = None)
 ```
+
+The student counts its model calls (`calls`) and keeps one `cache_usage` record per reply (`usage`:
+input, output and cached prompt tokens), so runs can check the prompt cache (D8).
 
 `model` is a LangChain chat model (live or the scripted fake). The student holds an append-only message
 list for its whole session.
@@ -129,9 +132,13 @@ list for its whole session.
    what they print; you hold specific beliefs, some of which may be wrong; always answer according to
    your beliefs, not according to how Python really works; answer only by calling the tools; when asked
    to explain, write 1–3 sentences in a student's voice and never mention a list of beliefs or being an AI.
-2. `HumanMessage(beliefs_message(profile))`: the only student-specific part, sent once, second. One line
-   per catalog id, in catalog order: the misconception's `summary` if the student holds it, otherwise
-   the matching correct statement from `CORRECT_BELIEFS` (below).
+2. `HumanMessage(beliefs_message(profile, style))`: the only student-specific part, sent once, second.
+   One line per catalog id, in catalog order: the misconception's `PERSONA_BELIEFS` text if the student
+   holds it (D35: the belief in a beginner's own terms, with wording from `docs/beginner-sources.md`,
+   never a probe's program), otherwise the matching correct statement from `CORRECT_BELIEFS` (below).
+   With a `style` (`clear`, `terse` or `hedging`, `STYLES`), one last line "How you talk: …" is added.
+   The style changes wording and confidence, never which answer the beliefs give. An unknown style
+   raises `ValueError`.
 3. Then the session's turns, appended only.
 
 `CORRECT_BELIEFS` maps each catalog id to one plain sentence stating the correct rule it replaces, for
@@ -160,6 +167,21 @@ the failure (`self.failures` counter) so the run reports it.
 **Scope this week:** built and tested offline with the scripted fake model only. Live LLM-student runs
 are week-3 work. `LLMStudent` cannot be used with `OracleInterpreter` (its texts are not in the bank); the
 run command rejects that combination.
+
+## 4a. Fidelity check (`mm_agent/fidelity.py`, `scripts/check_students.py`; D35)
+
+Before LLM students grade the agent, each one answers all 15 probes with no interviewer, and every
+answer is compared with `probe.intended(profile)` after `strip_hedges` and `classify`.
+
+- **Belief probe** (`intended != correct`): `faithful` (gave the predicted wrong answer), `leak` (gave the
+  correct answer: the model ignored the persona), `other_key`, or `unexpected`.
+- **Neutral probe** (`intended == correct`): `faithful`, `invented` (gave a misconception's answer the
+  student does not hold), or `unexpected`.
+
+Measures: belief fidelity and neutral accuracy (higher is better); leak, invented and unexpected rates
+(lower is better); mean confidence by outcome; per-misconception fidelity; the cached share of prompt
+tokens. `DEFAULT_PROFILES` has 12 students: none, the eight singles, and three pairs, ordered so that a
+first run with `--n 4` covers no misconception, an assignment one and two function ones.
 
 ## 5. Interpreters
 

@@ -79,7 +79,9 @@ TOOL: dict = {
                 "informative": {
                     "type": "boolean",
                     "description": "false when the explanation does not reveal how the student thinks the "
-                                   "program runs, for example 'idk', 'I guessed', or only restating the answer.",
+                                   "program runs, for example 'idk', 'I guessed', or only restating the answer. "
+                                   "true when the student admits a specific careless error (a slip), with an "
+                                   "empty misconceptions list.",
                 },
             },
             "required": ["misconceptions", "rationale", "informative"],
@@ -110,6 +112,11 @@ output alone is not enough.
 - If the explanation does not reveal how the student thinks the program runs (for example "idk", \
 "I guessed", or only restating the answer), set informative to false and give an empty misconceptions \
 list.
+- If the student says the answer came from a specific careless error, such as misreading a line, \
+losing track of which line printed what, writing the lines in the wrong order, or mixing the program up \
+with another one, the explanation IS informative: it shows the answer was a slip, not a belief. Set \
+informative to true and give an empty misconceptions list. A bare guess ("I just picked one") is not a \
+slip; it is not informative.
 - Hedged or imprecise wording still counts as informative when the reasoning can be recognized; label \
 the misconception it shows.
 - Correct reasoning gets an empty list, even if worded informally.

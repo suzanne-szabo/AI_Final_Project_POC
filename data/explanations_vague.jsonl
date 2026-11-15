@@ -32,3 +32,12 @@
 {"answer": "5", "explanation": "n is a copy of x so changing n doesn't change x", "id": "V32", "informative": true, "kind": "partly_wrong", "labels": [], "probe_id": "P07"}
 {"answer": "[1]", "explanation": "items is a copy but append still reaches data somehow", "id": "V33", "informative": true, "kind": "partly_wrong", "labels": ["A3_COPY_ON_ASSIGN"], "probe_id": "P14"}
 {"answer": "done", "explanation": "return gives 8 back but it isnt printed, i think it prints when returned sometimes", "id": "V34", "informative": true, "kind": "partly_wrong", "labels": ["F1_RETURN_IS_PRINT"], "probe_id": "P06"}
+{"answer": "6", "explanation": "oh wait I read it as x = x + 1 instead of n = n + 1, my bad", "id": "V35", "informative": true, "kind": "slip", "labels": [], "probe_id": "P07"}
+{"answer": "7 7", "explanation": "I copied the value of a into both spots by accident when I wrote it down", "id": "V36", "informative": true, "kind": "slip", "labels": [], "probe_id": "P01"}
+{"answer": "3 | 3", "explanation": "I misread the last line as print(3), careless mistake", "id": "V37", "informative": true, "kind": "slip", "labels": [], "probe_id": "P05"}
+{"answer": "42", "explanation": "I skimmed past the function part and just grabbed the 42, should have looked closer", "id": "V38", "informative": true, "kind": "slip", "labels": [], "probe_id": "P10"}
+{"answer": "after | 2", "explanation": "I wrote the two output lines in the wrong order, sloppy", "id": "V39", "informative": true, "kind": "slip", "labels": [], "probe_id": "P12"}
+{"answer": "[]", "explanation": "I forgot to count the append line when I traced it", "id": "V40", "informative": true, "kind": "slip", "labels": [], "probe_id": "P14"}
+{"answer": "[1, 2]", "explanation": "I went too fast and skipped right over b.append(3)", "id": "V41", "informative": true, "kind": "slip", "labels": [], "probe_id": "P03"}
+{"answer": "hi | start", "explanation": "I mixed this one up with the program before it", "id": "V42", "informative": true, "kind": "slip", "labels": [], "probe_id": "P08"}
+{"answer": "non-pos", "explanation": "no idea, I picked one", "id": "V43", "informative": false, "kind": "none", "labels": [], "probe_id": "P13"}

@@ -27,6 +27,15 @@ def test_prompt_has_the_informative_rules_and_not_the_old_rule():
     assert "weak evidence" not in interp.SYSTEM_PROMPT
 
 
+def test_prompt_and_tool_treat_an_admitted_slip_as_informative():
+    """D34: a specific careless error is informative with no labels; a bare guess is not informative."""
+    text = " ".join(interp.SYSTEM_PROMPT.split())
+    assert "the explanation IS informative: it shows the answer was a slip, not a belief" in text
+    assert "A bare guess" in text
+    desc = interp.TOOL["function"]["parameters"]["properties"]["informative"]["description"]
+    assert "careless error" in desc
+
+
 def test_evidence_defaults_to_informative():
     assert Evidence([], "", True, None, 0.0, {}).informative is True
 

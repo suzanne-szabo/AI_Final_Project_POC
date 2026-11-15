@@ -9,7 +9,8 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 from mm_agent.catalog import BY_ID as CATALOG
 from mm_agent.catalog import IDS
 from mm_agent.probes import BANK, BY_ID, strip_hedges
-from mm_agent.students import (CORRECT_BELIEFS, STUDENT_SYSTEM_PROMPT, BankStudent, ExplanationBank, LLMStudent,
+from mm_agent.students import (CORRECT_BELIEFS, PERSONA_BELIEFS, STUDENT_SYSTEM_PROMPT, STYLES, BankStudent,
+                               ExplanationBank, LLMStudent,
                                Response, ScriptedStudent, SimStudent, beliefs_message, random_profile)
 from tests.fakes import ScriptedChatModel, reply, tool_call
 
@@ -99,13 +100,49 @@ def test_scripted_student():
 
 
 def test_correct_beliefs_and_beliefs_message():
-    assert set(CORRECT_BELIEFS) == set(IDS)
+    assert set(CORRECT_BELIEFS) == set(IDS) == set(PERSONA_BELIEFS)
     msg = beliefs_message(frozenset({F2}))
-    assert CATALOG[F2].summary in msg
+    assert PERSONA_BELIEFS[F2] in msg            # D35: held beliefs in the beginner's own terms
     assert CORRECT_BELIEFS[F2] not in msg
     for m in IDS:
         if m != F2:
             assert CORRECT_BELIEFS[m] in msg
+    assert "How you talk" not in msg              # no style unless one is given
+
+
+def test_persona_beliefs_do_not_contain_probe_programs():
+    """D35: a persona states the belief; it must not hand the student a probe's program or answer key."""
+    from mm_agent.probes import BANK
+    for text in PERSONA_BELIEFS.values():
+        for probe in BANK:
+            for line in probe.code.splitlines():
+                if len(line.strip()) > 8:
+                    assert line.strip() not in text, (probe.id, line)
+
+
+def test_style_is_added_last_and_unknown_style_is_rejected():
+    for style, text in STYLES.items():
+        msg = beliefs_message(frozenset({F2}), style)
+        assert msg.endswith(text) and msg.startswith(beliefs_message(frozenset({F2})))
+    with pytest.raises(ValueError):
+        beliefs_message(frozenset(), "shouty")
+
+
+def test_system_prompt_is_constant_and_tells_the_student_to_keep_its_beliefs():
+    text = " ".join(STUDENT_SYSTEM_PROMPT.split())
+    assert "do not correct yourself" in text and "Talk like a beginner" in text
+    for marker in ("A1_LINKED", "F2_PARAM_LINKED", "{", "}"):
+        assert marker not in STUDENT_SYSTEM_PROMPT   # nothing student-specific in the shared prefix (D8)
+
+
+def test_llm_student_style_goes_in_the_second_message_and_calls_are_counted():
+    model = ScriptedChatModel([reply(tool_call("respond", {"answer": "6", "confidence": 2}))])
+    s = LLMStudent("llm-2", frozenset({F2}), model, style="hedging")
+    s.answer(BY_ID["P07"])
+    first = model.sent[0]
+    assert first[0].content == STUDENT_SYSTEM_PROMPT
+    assert first[1].content == beliefs_message(frozenset({F2}), "hedging")
+    assert s.calls == 1 and len(s.usage) == 1 and set(s.usage[0]) == {"input_tokens", "output_tokens", "cached_tokens"}
 
 
 def test_llm_student_prompt_structure_and_append_only_history():
