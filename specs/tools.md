@@ -55,7 +55,10 @@ Status: Draft v1 (2026-11-09).
 - **Effect:** for the last probe: `text = student.explain(probe)`;
   `evidence = interpreter.label(probe, last_answer, text)`. **Scope (D27):** if the last answer's
   `answer_matches` names misconceptions, the scored set is those ids; for a `correct` or `unexpected`
-  answer it is all of `probe.keys`. If `evidence.valid` and `evidence.informative`:
+  answer it is all of `probe.keys`. **Exception (D38):** after an `unexpected` answer, an explanation
+  with no labels (typically an admitted careless error) has an empty scored set and does not update the
+  belief, because it says nothing about which beliefs the student holds. If `evidence.valid`,
+  `evidence.informative` and the scored set is not empty:
   `belief.update_explanation(probe, applied, config.interpreter_sensitivity,
   config.interpreter_false_alarm, scope=scored)` where `applied` is the labels in the scored set and
   `ignored` is every other label (D21, D27). If the

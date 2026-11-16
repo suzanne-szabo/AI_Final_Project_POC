@@ -1,0 +1,218 @@
+{
+  "eig": {
+    "brier": 0.027146971277499998,
+    "budget_rate": 0.258,
+    "confident_wrong_rate": 0.108,
+    "diagnosed_rate": 0.742,
+    "error_rate_by_kind": {},
+    "exact_match": 0.764,
+    "mean_explanations": 0,
+    "mean_probes": 8.562,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 0.9026548672566371,
+        "recall": 0.9357798165137615,
+        "support": 109
+      },
+      "A2_REVERSED": {
+        "precision": 0.97,
+        "recall": 0.9238095238095239,
+        "support": 105
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 0.8484848484848485,
+        "recall": 0.8316831683168316,
+        "support": 101
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 0.968421052631579,
+        "recall": 0.9292929292929293,
+        "support": 99
+      },
+      "F2_PARAM_LINKED": {
+        "precision": 0.9405940594059405,
+        "recall": 0.8878504672897196,
+        "support": 107
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 0.978021978021978,
+        "recall": 0.8725490196078431,
+        "support": 102
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 0.9494949494949495,
+        "recall": 0.8623853211009175,
+        "support": 109
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": 0.9782608695652174,
+        "recall": 0.9574468085106383,
+        "support": 94
+      }
+    },
+    "sessions": 500,
+    "step_limit_rate": 0.0
+  },
+  "eig_explain": {
+    "brier": 0.03070233604,
+    "budget_rate": 0.124,
+    "confident_wrong_rate": 0.192,
+    "diagnosed_rate": 0.876,
+    "error_rate_by_kind": {},
+    "exact_match": 0.754,
+    "mean_explanations": 2.674,
+    "mean_probes": 7.96,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 0.9803921568627451,
+        "recall": 0.9174311926605505,
+        "support": 109
+      },
+      "A2_REVERSED": {
+        "precision": 0.9803921568627451,
+        "recall": 0.9523809523809523,
+        "support": 105
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 0.9875,
+        "recall": 0.7821782178217822,
+        "support": 101
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 0.9468085106382979,
+        "recall": 0.898989898989899,
+        "support": 99
+      },
+      "F2_PARAM_LINKED": {
+        "precision": 0.9647058823529412,
+        "recall": 0.7663551401869159,
+        "support": 107
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 0.9759036144578314,
+        "recall": 0.7941176470588235,
+        "support": 102
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 0.9611650485436893,
+        "recall": 0.908256880733945,
+        "support": 109
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": 0.9425287356321839,
+        "recall": 0.8723404255319149,
+        "support": 94
+      }
+    },
+    "sessions": 500,
+    "step_limit_rate": 0.0
+  },
+  "fixed": {
+    "brier": 0.05100463291000001,
+    "budget_rate": 1.0,
+    "confident_wrong_rate": 0.0,
+    "diagnosed_rate": 0.0,
+    "error_rate_by_kind": {},
+    "exact_match": 0.568,
+    "mean_explanations": 0,
+    "mean_probes": 10,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 0.9719626168224299,
+        "recall": 0.9541284403669725,
+        "support": 109
+      },
+      "A2_REVERSED": {
+        "precision": 0.9719626168224299,
+        "recall": 0.9904761904761905,
+        "support": 105
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 0.7848101265822784,
+        "recall": 0.6138613861386139,
+        "support": 101
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 0.9578947368421052,
+        "recall": 0.9191919191919192,
+        "support": 99
+      },
+      "F2_PARAM_LINKED": {
+        "precision": 0.8484848484848485,
+        "recall": 0.7850467289719626,
+        "support": 107
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 0.9578947368421052,
+        "recall": 0.8921568627450981,
+        "support": 102
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 0.8490566037735849,
+        "recall": 0.8256880733944955,
+        "support": 109
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": null,
+        "recall": 0.0,
+        "support": 94
+      }
+    },
+    "sessions": 500,
+    "step_limit_rate": 0.0
+  },
+  "shuffled": {
+    "brier": 0.0457237018,
+    "budget_rate": 0.88,
+    "confident_wrong_rate": 0.008,
+    "diagnosed_rate": 0.12,
+    "error_rate_by_kind": {},
+    "exact_match": 0.628,
+    "mean_explanations": 0,
+    "mean_probes": 9.924,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 0.92,
+        "recall": 0.8440366972477065,
+        "support": 109
+      },
+      "A2_REVERSED": {
+        "precision": 0.9456521739130435,
+        "recall": 0.8285714285714286,
+        "support": 105
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 0.896551724137931,
+        "recall": 0.7722772277227723,
+        "support": 101
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 0.8902439024390244,
+        "recall": 0.7373737373737373,
+        "support": 99
+      },
+      "F2_PARAM_LINKED": {
+        "precision": 0.8865979381443299,
+        "recall": 0.8037383177570093,
+        "support": 107
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 0.8829787234042553,
+        "recall": 0.8137254901960784,
+        "support": 102
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 0.9120879120879121,
+        "recall": 0.7614678899082569,
+        "support": 109
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": 0.8695652173913043,
+        "recall": 0.851063829787234,
+        "support": 94
+      }
+    },
+    "sessions": 500,
+    "step_limit_rate": 0.0
+  }
+}

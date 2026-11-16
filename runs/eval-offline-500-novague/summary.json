@@ -1,0 +1,110 @@
+{
+  "eig": {
+    "brier": 0.023087665809999998,
+    "budget_rate": 0.192,
+    "confident_wrong_rate": 0.1,
+    "diagnosed_rate": 0.808,
+    "error_rate_by_kind": {},
+    "exact_match": 0.814,
+    "mean_explanations": 0,
+    "mean_probes": 8.372,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 0.9196428571428571,
+        "recall": 0.944954128440367,
+        "support": 109
+      },
+      "A2_REVERSED": {
+        "precision": 0.9711538461538461,
+        "recall": 0.9619047619047619,
+        "support": 105
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 0.9,
+        "recall": 0.8910891089108911,
+        "support": 101
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 0.9278350515463918,
+        "recall": 0.9090909090909091,
+        "support": 99
+      },
+      "F2_PARAM_LINKED": {
+        "precision": 0.9433962264150944,
+        "recall": 0.9345794392523364,
+        "support": 107
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 0.9797979797979798,
+        "recall": 0.9509803921568627,
+        "support": 102
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 0.9711538461538461,
+        "recall": 0.926605504587156,
+        "support": 109
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": 0.9157894736842105,
+        "recall": 0.925531914893617,
+        "support": 94
+      }
+    },
+    "sessions": 500,
+    "step_limit_rate": 0.0
+  },
+  "eig_explain": {
+    "brier": 0.030171558615,
+    "budget_rate": 0.108,
+    "confident_wrong_rate": 0.19,
+    "diagnosed_rate": 0.892,
+    "error_rate_by_kind": {},
+    "exact_match": 0.762,
+    "mean_explanations": 2.718,
+    "mean_probes": 7.928,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 0.970873786407767,
+        "recall": 0.9174311926605505,
+        "support": 109
+      },
+      "A2_REVERSED": {
+        "precision": 0.9901960784313726,
+        "recall": 0.9619047619047619,
+        "support": 105
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 0.9239130434782609,
+        "recall": 0.8415841584158416,
+        "support": 101
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 0.9883720930232558,
+        "recall": 0.8585858585858586,
+        "support": 99
+      },
+      "F2_PARAM_LINKED": {
+        "precision": 0.9393939393939394,
+        "recall": 0.8691588785046729,
+        "support": 107
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 0.9885057471264368,
+        "recall": 0.8431372549019608,
+        "support": 102
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 0.95,
+        "recall": 0.8715596330275229,
+        "support": 109
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": 0.9605263157894737,
+        "recall": 0.776595744680851,
+        "support": 94
+      }
+    },
+    "sessions": 500,
+    "step_limit_rate": 0.0
+  }
+}

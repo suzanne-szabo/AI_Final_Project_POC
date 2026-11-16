@@ -116,6 +116,36 @@ def test_uninformative_or_failed_explanation_leaves_belief_unchanged(evidence):
         assert "interpreter_error" in obs.data
 
 
+def test_no_label_explanation_after_unexpected_answer_changes_nothing():
+    """D38: an admitted slip after an unexpected answer is not evidence about any misconception."""
+    session, c = make(student(P07=Response("banana", 1)), FixedInterpreter(ev([])))
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
+    before = list(session.belief.weights)
+    obs = c.handle("ask_explanation", {})
+    assert obs.accepted and obs.data["informative"] is True
+    assert obs.data["belief_updated"] is False and obs.data["scored"] == []
+    assert session.belief.weights == before
+
+
+def test_labeled_explanation_after_unexpected_answer_still_counts():
+    session, c = make(student(P07=Response("banana", 2)), FixedInterpreter(ev([F2])))
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
+    before = session.belief.marginals()[F2]
+    obs = c.handle("ask_explanation", {})
+    assert obs.data["belief_updated"] is True and obs.data["applied_labels"] == [F2]
+    assert session.belief.marginals()[F2] > before
+
+
+def test_no_label_explanation_after_a_key_answer_counts_against_that_misconception():
+    """D34 kept: a slip onto a misconception's answer lowers that misconception."""
+    session, c = make(student(P07=Response("6", 2)), FixedInterpreter(ev([])))
+    c.handle("ask_probe", {"probe_id": "P07", "reason": "r"})
+    before = session.belief.marginals()[F2]
+    obs = c.handle("ask_explanation", {})
+    assert obs.data["belief_updated"] is True and obs.data["scored"] == [F2]
+    assert session.belief.marginals()[F2] < before
+
+
 # --- policies ----------------------------------------------------------------------------------
 
 def assert_rejected(c, session, tool, args, policy):

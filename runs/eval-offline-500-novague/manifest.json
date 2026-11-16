@@ -1,0 +1,58 @@
+{
+  "command": "python -m mm_agent.run --deciders eig eig_explain --students 500 --seed 7 --vague-answer-rate 0 --out /Users/suzanneszabo/Desktop/Suzanne/Fall2026/AI/final_project/runs/eval-offline-500-novague",
+  "config": {
+    "high": 0.85,
+    "interpreter_false_alarm": 0.05,
+    "interpreter_sensitivity": 0.85,
+    "low": 0.15,
+    "max_consecutive_rejections": 3,
+    "max_explanations": 5,
+    "max_probes": 10,
+    "max_steps": 30,
+    "model_slip": 0.1,
+    "prior": 0.2,
+    "rank_k": 3,
+    "slip_by_confidence": {
+      "1": 0.35,
+      "2": 0.2,
+      "3": 0.1,
+      "4": 0.06,
+      "5": 0.04
+    },
+    "use_confidence": true
+  },
+  "ended": "2026-11-15T23:12:56",
+  "git_commit": "cb6b930c510112edf737c28c504bc277d043da1f",
+  "models": {
+    "interpreter": null,
+    "interviewer": null,
+    "student": null
+  },
+  "options": {
+    "confidence_mode": "informative",
+    "deciders": [
+      "eig",
+      "eig_explain"
+    ],
+    "interpreter": "oracle",
+    "interpreter_model": "Qwen3.8-Flash-Next",
+    "interviewer_model": null,
+    "max_probes": 10,
+    "no_use_confidence": false,
+    "out": "/Users/suzanneszabo/Desktop/Suzanne/Fall2026/AI/final_project/runs/eval-offline-500-novague",
+    "rate": 0.2,
+    "seed": 7,
+    "skip_planted": [],
+    "student": "bank",
+    "student_model": null,
+    "student_slip": 0.15,
+    "student_style": null,
+    "students": 500,
+    "vague_answer_rate": 0.0
+  },
+  "started": "2026-11-15T23:10:59",
+  "tracing": {
+    "langsmith": true,
+    "project": "mental-model-agent"
+  }
+}

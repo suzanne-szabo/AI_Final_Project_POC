@@ -166,14 +166,21 @@ def ask_explanation(session, args: AskExplanationArgs) -> dict:
     # of the probe's relevant misconceptions (specs/tools.md §2.3).
     matched = answer_matches(probe, probe.classify(strip_hedges(last_answer)))
     scored = [m for m in IDS if m in probe.keys and (m in matched or matched[0] in ("correct", "unexpected"))]
+    # D38: after an unexpected answer, an explanation that shows no misconception (typically an admitted
+    # careless error) says nothing about the student's beliefs, so it does not update the belief. Scored
+    # against every relevant misconception it would count as evidence that the student holds none of them,
+    # which is wrong for a student who holds one and slipped away from its answer.
+    if matched == ["unexpected"] and not labels:
+        scored = []
     applied = [m for m in labels if m in scored]
     ignored = [m for m in labels if m not in scored]
-    if informative:
+    updated = informative and bool(scored)
+    if updated:
         session.belief.update_explanation(probe, applied, config.interpreter_sensitivity,
                                           config.interpreter_false_alarm, scope=scored)
     session.explained.add(probe.id)
     data = {"probe_id": probe.id, "explanation": text, "interpreter_valid": valid,
-            "informative": informative, "belief_updated": informative, "scored": scored, "labels": labels,
+            "informative": informative, "belief_updated": updated, "scored": scored, "labels": labels,
             "applied_labels": applied, "ignored_labels": ignored,
             "marginals": rounded(session.belief.marginals()),
             "explanations_remaining": config.max_explanations - len(session.explained),

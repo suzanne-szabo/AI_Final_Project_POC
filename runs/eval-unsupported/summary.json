@@ -1,0 +1,65 @@
+{
+  "interviewer": {
+    "brier": 0.26500000000000007,
+    "budget_rate": 0.0,
+    "confident_wrong_rate": 0.0,
+    "diagnosed_rate": 0.0,
+    "error_rate_by_kind": {
+      "MODEL_ERROR": 1.0
+    },
+    "exact_match": 0.0,
+    "interviewer": {
+      "cached_share": null,
+      "median_latency": null,
+      "model_calls_per_session": 2.0,
+      "rejections_per_session": 0.0,
+      "steps_per_session": 1.0
+    },
+    "mean_explanations": 0,
+    "mean_probes": 0,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      },
+      "A2_REVERSED": {
+        "precision": null,
+        "recall": 0.0,
+        "support": 1
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": null,
+        "recall": 0.0,
+        "support": 1
+      },
+      "F2_PARAM_LINKED": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": null,
+        "recall": 0.0,
+        "support": 1
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      }
+    },
+    "sessions": 1,
+    "step_limit_rate": 0.0
+  }
+}
