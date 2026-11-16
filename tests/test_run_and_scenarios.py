@@ -96,3 +96,19 @@ def test_main_reads_dotenv_for_offline_runs(tmp_path, monkeypatch):
     import os
     assert os.environ["MM_DOTENV_MARKER"] == "from-file"
     assert os.environ["LANGSMITH_TRACING"] == "false"
+
+
+def test_skip_planted_keeps_ids_and_profiles_of_the_other_students(tmp_path):
+    """D37: skipped students are removed after drawing; the rest match the unfiltered run exactly."""
+    import json
+    skip = ["A2_REVERSED", "F5_RUNS_AFTER_RETURN"]
+    assert main(["--deciders", "eig", "--students", "20", "--out", str(tmp_path / "all")]) == 0
+    assert main(["--deciders", "eig", "--students", "20", "--skip-planted", *skip, "--out", str(tmp_path / "kept")]) == 0
+    def headers(d):
+        return {f.name: json.loads(f.read_text().splitlines()[0]) for f in sorted(d.glob("eig_sim-*.jsonl"))}
+    full, kept = headers(tmp_path / "all"), headers(tmp_path / "kept")
+    assert kept and len(kept) < len(full)
+    for name, h in kept.items():
+        assert h["planted"] == full[name]["planted"] and not set(h["planted"]) & set(skip)
+        assert (tmp_path / "kept" / name).read_text() == (tmp_path / "all" / name).read_text()
+    assert main(["--deciders", "eig", "--students", "1", "--skip-planted", "Z9", "--out", str(tmp_path / "bad")]) == 2

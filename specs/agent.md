@@ -122,7 +122,7 @@ Adds `"The probe budget is spent: call submit_diagnosis."` when no probe may be 
 python -m mm_agent.run --deciders eig eig_explain [interviewer] --students 100 --seed 7
     [--rate 0.2] [--student-slip 0.15] [--student bank|llm] [--student-style clear|terse|hedging|mixed] [--confidence-mode informative|uninformative|none]
     [--no-use-confidence] [--vague-answer-rate 0.15] [--interpreter oracle|llm|none] [--interviewer-model NAME]
-    [--interpreter-model NAME] [--student-model NAME] [--max-probes 10] [--out DIR]
+    [--interpreter-model NAME] [--student-model NAME] [--max-probes 10] [--skip-planted ID ...] [--out DIR]
 ```
 
 - **Students and seeding (as week 1):** profiles from `random.Random(seed)` with

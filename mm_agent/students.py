@@ -406,9 +406,13 @@ def _cache_usage(reply) -> dict:
 PERSONA_BELIEFS: dict[str, str] = {
     "A1_LINKED": "You think `b = a` ties the two names together for good. You picked up that Python 'uses "
                  "references', so after `b = a` the names point to the same thing, and if either one is later "
-                 "set to something new, the other one follows it.",
+                 "set to something new, the other one follows it. This holds for numbers and lists alike, and "
+                 "setting a name to a brand-new value does not break the tie. For example, after "
+                 "`first = second` and then `second = [5]`, first is [5] too.",
     "A2_REVERSED": "You read `=` as 'these two are equal now', and you think the value moves from the left name "
-                   "into the right name: in `x = y`, x's value is copied into y, and x keeps its value.",
+                   "into the right name: in `x = y`, x's value is copied into y, and x keeps its value. For "
+                   "example, after `top = 1`, `low = 9` and then `top = low`, you expect top to still be 1 and low "
+                   "to be 1 now. If the name on the right does not exist yet, that line is an error to you.",
     "A3_COPY_ON_ASSIGN": "You think `b = a` with a list gives b its own copy, like copying a file, and that "
                          "passing a list into a function gives the function its own copy, since parameters are "
                          "local. So a change made through one name never shows up through the other name.",
@@ -424,7 +428,10 @@ PERSONA_BELIEFS: dict[str, str] = {
                               "code after the call can still use them, as if the function saved them.",
     "F5_RUNS_AFTER_RETURN": "You think `return` records the answer but the function keeps going: lines after a "
                             "`return` still run, and if a later `return` is reached, that later value is the one "
-                            "the caller gets.",
+                            "the caller gets. The caller only gets the value once the whole function has finished. "
+                            "For example, in a function with `return total` followed by `print('finished')`, you "
+                            "expect 'finished' to be printed before the caller uses the value, and a function that "
+                            "reaches `return 1` and later `return 2` gives back 2.",
 }
 
 # D35: how the student talks (docs/beginner-sources.md §2). The style changes wording and confidence,

@@ -1,0 +1,14 @@
+{
+  "cached_share": 0.929,
+  "calls": 209,
+  "command": "python scripts/check_students.py --model Gemma-4-26B-A4B --explain",
+  "ended": "2026-11-15T15:26:03",
+  "explain": true,
+  "failures": 0,
+  "git_commit": "00bac2018534faa4366a3ce001afddeaf784cdca",
+  "model": "Gemma-4-26B-A4B",
+  "prompt_tokens": 311012,
+  "started": "2026-11-15T15:24:10",
+  "students": 12,
+  "style": "clear"
+}

@@ -63,6 +63,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--student-style", choices=("clear", "terse", "hedging", "mixed"), default=None,
                         help="LLM students only (D35): how they talk; 'mixed' picks one per student from the seed")
     parser.add_argument("--max-probes", type=int, default=10)
+    parser.add_argument("--skip-planted", nargs="+", default=[], metavar="ID",
+                        help="skip students whose planted profile contains any of these misconception ids; the "
+                             "others keep their ids and profiles (D37)")
     parser.add_argument("--out", type=Path, default=None)
     return parser
 
@@ -84,6 +87,9 @@ def check_options(args) -> None:
                          "are not in the bank (use --interpreter llm or none)")
     if args.student == "llm" and not args.student_model:
         raise UsageError("--student llm needs --student-model NAME")
+    unknown = set(args.skip_planted) - set(IDS)
+    if unknown:
+        raise UsageError(f"--skip-planted: unknown misconception ids {sorted(unknown)}")
     if args.student_style and args.student != "llm":
         raise UsageError("--student-style applies only to --student llm")
     uses_llm = "interviewer" in deciders or args.interpreter == "llm" or args.student == "llm"
@@ -144,6 +150,8 @@ def run(args, argv: list[str]) -> int:
     bank = ExplanationBank.load(BANK_PATH)
     rng = random.Random(args.seed)
     students = [(f"sim-{i:03d}", random_profile(rng, args.rate)) for i in range(args.students)]
+    if args.skip_planted:  # D37: filter after drawing, so every kept student is identical to other runs
+        students = [(sid, p) for sid, p in students if not p & set(args.skip_planted)]
 
     models = {"interviewer": args.interviewer_model if "interviewer" in args.deciders else None,
               "interpreter": args.interpreter_model if args.interpreter == "llm" else None,
@@ -202,7 +210,9 @@ def run(args, argv: list[str]) -> int:
         print(f"{decider}: exact {summary[decider]['exact_match']:.2f}, "
               f"Brier {summary[decider]['brier']:.3f}, mean probes {summary[decider]['mean_probes']:.1f}")
 
-    header = (f"{args.students} simulated students ({args.student}), seed {args.seed}, plant rate {args.rate}, "
+    drawn = (f" (of {args.students} drawn; skipped those with {', '.join(args.skip_planted)} planted)"
+             if args.skip_planted else "")
+    header = (f"{len(students)} simulated students ({args.student}){drawn}, seed {args.seed}, plant rate {args.rate}, "
               f"student slip {args.student_slip}, confidence mode {args.confidence_mode} "
               f"(used: {config.use_confidence}), vague answer rate {args.vague_answer_rate}, "
               f"interpreter {args.interpreter}, budget {config.max_probes} probes / "

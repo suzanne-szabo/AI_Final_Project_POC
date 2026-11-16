@@ -64,7 +64,7 @@ intended difference is the one named in the row.
 | C4 | Refinement in the full agent | Qwen interviewer: baseline vs. revised; 100 students | `eval-baseline-qwen-100`, `eval-revised-qwen-100` |
 | C5 | E3: interviewer model | Qwen vs. Gemma interviewer, revised code; 100 students (decision on the first 50 as planned, all 100 reported) | `eval-revised-qwen-100`, `eval-revised-gemma-100` |
 | C6 | Robustness: vague and hedged answers | eig_explain, oracle; vague-answer rate 0.15 vs. 0; 500 students | `eval-offline-500`, `eval-offline-500-novague` |
-| C7 | E4: do results hold on LLM students? | Qwen interviewer + Qwen interpreter facing Gemma LLM students vs. bank students with the same planted profiles; 20 students | `eval-llmstudents-20` (planned run) |
+| C7 | E4: does the agent's accuracy hold when students answer in their own words? | Qwen interviewer + Qwen interpreter facing Gemma LLM students (`--student-style mixed`) vs. bank students with the same planted profiles (the same ids in `eval-revised-qwen-100`). **Only the 12 of the first 20 students without A2 or F5 planted** (`--skip-planted A2_REVERSED F5_RUNS_AFTER_RETURN`; D37) | `eval-llmstudents-faithful` |
 | C8 | Agent reproducibility | Qwen interviewer, HW-11 run vs. tonight's baseline run, on the same 20 students | `baseline-qwen-d32`, `eval-baseline-qwen-100` (sim-000 to sim-019) |
 
 C3 is the primary test of the refinement. Its decider is deterministic code, so the only live
@@ -135,6 +135,10 @@ C6 also reports the pass-to-fail rate: original passes, variant fails, divided b
 - **Using LLM students for evaluation (C7).** LLM-student results are treated as evidence about the agent
   only if the 12-student fidelity check reaches belief fidelity ≥ 70% and leak ≤ 25%. Otherwise they are
   reported as a finding about the simulator, and C7 is descriptive only.
+- **C7 scope, fixed after the fidelity rerun and before any C7 data (D37).** Gemma does not express A2 or F5
+  (0/3 and 0/4 leaked), while the other six misconceptions were 22/22. C7 evaluates the inference tool, not the
+  simulator, so it runs only on students whose planted profile the simulator can play: the 12 of the first 20
+  without A2 or F5. Detection of A2 and F5 is evaluated on bank students only (C1 to C5).
 - **Circularity (C7).** If exact match on LLM students is more than 15 percentage points below that of
   the paired bank students, the bank results are reported as an upper bound that does not transfer.
 
@@ -153,7 +157,7 @@ Each is reported with its outcome, success status and an excerpt of its trace.
 | R4 | Unsuccessful: certain but wrong | `eval-revised-qwen-100`: the lowest-numbered certain-but-wrong session; if there is none, the lowest-numbered failed session |
 | R5 | Boundary: budget reached | `eval-revised-qwen-100`: the lowest-numbered session ending `BUDGET` |
 | R6 | Unsupported input | an interviewer run with an unknown model name (rerun of the HW-11 B1 command on the revised code) |
-| R7 | LLM student | C7: the lowest-numbered success and the lowest-numbered failure, if both exist |
+| R7 | LLM student | C7 (`eval-llmstudents-faithful`): the lowest-numbered success and the lowest-numbered failure, if both exist |
 
 ---
 
@@ -192,4 +196,6 @@ senior project.
 
 | Date | Change | Reason |
 |---|---|---|
-| — | — | — |
+| 2026-11-15 | One persona revision round before C7 (`PERSONA_BELIEFS` for A1, A2, F5 gain a worked example written with non-probe programs); the fidelity check is rerun and the §5 gate is applied to the rerun. No further revision before C7. | First full check (`runs/students-check-2026-11-15_1508/`): belief fidelity 69%, leak 24% (gate: ≥ 70%, ≤ 25%). Misses were concentrated: A2 0/3 (model states the correct rule), F5 0/4 (one student leaked; one held the belief but in a different answer form), A1 2/4; the other five misconceptions 18/18. The revision was planned in `docs/student-simulator-plan.md` §3.1. Made before any C7 data. |
+| 2026-11-15 | Fidelity rerun (`runs/students-check-2026-11-15_1524/`): 76% fidelity, 24% leak, so the §5 gate **passes** and C7 counts as evidence. A1 is now 4/4, but A2 (0/3) and F5 (0/4) still leak completely, so C7 is reported split three ways (§5). | Without the split, simulator leaks on A2 and F5 would be scored as agent errors. The split was fixed before any C7 data. |
+| 2026-11-15 | C7 runs only on the students without A2 or F5 (12 of the first 20), replacing the three-way split. | Suzanne: the evaluation is about the inference tool, not the simulator; students whose beliefs the simulator cannot express would measure the simulator. Decided before any C7 data. |

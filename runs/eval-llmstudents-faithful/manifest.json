@@ -1,0 +1,60 @@
+{
+  "command": "python -m mm_agent.run --deciders interviewer --interviewer-model Qwen3.8-Flash-Next --interpreter llm --student llm --student-model Gemma-4-26B-A4B --student-style mixed --students 20 --skip-planted A2_REVERSED F5_RUNS_AFTER_RETURN --seed 7 --out runs/eval-llmstudents-faithful",
+  "config": {
+    "high": 0.85,
+    "interpreter_false_alarm": 0.05,
+    "interpreter_sensitivity": 0.85,
+    "low": 0.15,
+    "max_consecutive_rejections": 3,
+    "max_explanations": 5,
+    "max_probes": 10,
+    "max_steps": 30,
+    "model_slip": 0.1,
+    "prior": 0.2,
+    "rank_k": 3,
+    "slip_by_confidence": {
+      "1": 0.35,
+      "2": 0.2,
+      "3": 0.1,
+      "4": 0.06,
+      "5": 0.04
+    },
+    "use_confidence": true
+  },
+  "ended": "2026-11-15T16:04:10",
+  "git_commit": "00bac2018534faa4366a3ce001afddeaf784cdca",
+  "models": {
+    "interpreter": "Qwen3.8-Flash-Next",
+    "interviewer": "Qwen3.8-Flash-Next",
+    "student": "Gemma-4-26B-A4B"
+  },
+  "options": {
+    "confidence_mode": "informative",
+    "deciders": [
+      "interviewer"
+    ],
+    "interpreter": "llm",
+    "interpreter_model": "Qwen3.8-Flash-Next",
+    "interviewer_model": "Qwen3.8-Flash-Next",
+    "max_probes": 10,
+    "no_use_confidence": false,
+    "out": "runs/eval-llmstudents-faithful",
+    "rate": 0.2,
+    "seed": 7,
+    "skip_planted": [
+      "A2_REVERSED",
+      "F5_RUNS_AFTER_RETURN"
+    ],
+    "student": "llm",
+    "student_model": "Gemma-4-26B-A4B",
+    "student_slip": 0.15,
+    "student_style": "mixed",
+    "students": 20,
+    "vague_answer_rate": 0.15
+  },
+  "started": "2026-11-15T15:49:54",
+  "tracing": {
+    "langsmith": true,
+    "project": "mental-model-agent"
+  }
+}
