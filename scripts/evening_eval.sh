@@ -5,7 +5,7 @@
 #
 # Reruns what the course key's $2/hour budget cut off on night 1, and evaluates D38. Every live run goes
 # through scripts/paced_run.py: when the hourly budget is spent, the affected session is discarded, the
-# script waits 10 minutes, and the session is rerun from scratch. Expected total: about 4 to 5 hours,
+# script waits 10 minutes, and the session is rerun from scratch. Expected total: about 6 to 7 hours,
 # mostly waiting for the budget window. LangSmith is off (free tier used up); the JSONL traces are the
 # evidence. Protocol: docs/evaluation-protocol.md (see its change table for night 2).
 
@@ -42,9 +42,9 @@ run "$ROOT" "eval-offline-500-novague-d38" --deciders eig_explain --students 500
 # --- C3 again: D38 with the live interpreter, same 100 students as night 1 (~12 min) ----------------
 run "$ROOT" "eval-d38-eigexplain-llm-100" --deciders eig_explain --interpreter llm --students 100 --seed $SEED
 
-# --- C4 and C5: full agent, 50 students each --------------------------------------------------------
-run "$BASE" "eval-baseline-qwen-50" --deciders interviewer --interviewer-model $QWEN --interpreter llm --students 50 --seed $SEED
-run "$ROOT" "eval-d38-qwen-50"      --deciders interviewer --interviewer-model $QWEN --interpreter llm --students 50 --seed $SEED
-run "$ROOT" "eval-d38-gemma-50"     --deciders interviewer --interviewer-model $GEMMA --interpreter llm --students 50 --seed $SEED
+# --- C4 and C5: full agent, 100 students each (as originally planned) --------------------------------------------------------
+run "$BASE" "eval-baseline-qwen-100-paced" --deciders interviewer --interviewer-model $QWEN --interpreter llm --students 100 --seed $SEED
+run "$ROOT" "eval-d38-qwen-100"      --deciders interviewer --interviewer-model $QWEN --interpreter llm --students 100 --seed $SEED
+run "$ROOT" "eval-d38-gemma-100"     --deciders interviewer --interviewer-model $GEMMA --interpreter llm --students 100 --seed $SEED
 
 log "ALL DONE"
