@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mental-Model Inference Agent: Refinement and Evaluation (Suzanne Szabo)</title>
+<meta name="author" content="Suzanne Szabo">
+<meta name="description" content="U0-HW-12 refinement and evaluation of an agent that infers a student's mental model of the Python function-call notional machine: protocol, refinement, results, examples, limitations, provisional recommendation and completion plan.">
+<style>
+  @page { size: Letter; margin: 0.8in 0.85in 0.8in 0.85in;
+          @bottom-center { content: "Page " counter(page) " of " counter(pages); font-family: "DejaVu Sans", sans-serif; font-size: 8.5pt; color: #444; } }
+  html { font-size: 10.5pt; }
+  body { font-family: "DejaVu Serif", Georgia, serif; color: #111; line-height: 1.36; margin: 0; }
+  h1 { font-size: 18pt; margin: 0 0 4pt; line-height: 1.2; }
+  h2 { font-size: 13pt; margin: 15pt 0 5pt; border-bottom: 0.75pt solid #999; padding-bottom: 2pt; break-after: avoid; }
+  h3 { font-size: 11pt; margin: 10pt 0 3pt; break-after: avoid; }
+  p { margin: 0 0 6pt; }
+  ul, ol { margin: 0 0 6pt; padding-left: 18pt; }
+  li { margin-bottom: 2.5pt; }
+  .byline { margin: 0 0 10pt; color: #333; }
+  .byline p { margin: 0; }
+  code { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 8.6pt; }
+  pre { font-family: "DejaVu Sans Mono", Menlo, monospace; font-size: 7.9pt; background: #f3f3f3; padding: 5pt 7pt; margin: 0 0 7pt; white-space: pre-wrap; break-inside: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 3pt 0 9pt; font-size: 8.7pt; }
+  caption { text-align: left; font-weight: bold; font-size: 9.5pt; padding-bottom: 3pt; caption-side: top; }
+  th, td { border: 0.5pt solid #888; padding: 2.3pt 4pt; vertical-align: top; text-align: left; }
+  thead th { background: #e6e6e6; }
+  tbody th { font-weight: normal; background: #f6f6f6; }
+  tr { break-inside: avoid; }
+  td.num, th.num { text-align: right; }
+  a { color: #0b4f9c; }
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Mental-Model Inference Agent: Refinement and Evaluation</h1>
+<div class="byline">
+<p>U0-HW-12: Agent Project Refinement and Evaluation · Suzanne Szabo · Utah Tech University, AI, Fall 2026 · November 19, 2026</p>
+<p>Repository: <a href="https://github.com/suzanne-szabo/AI_Final_Project_POC">https://github.com/suzanne-szabo/AI_Final_Project_POC</a></p>
+<p>Submitted commit: <code>SUBMITTED_COMMIT</code>. Evaluated code: <code>f8cbd4f</code> (refined agent) and <code>3a00ed7</code> (HW-11 baseline).</p>
+</div>
+</header>
+
+<section>
+<h2>1. Summary</h2>
+<p>The agent diagnoses which of eight documented misconceptions a student holds about the Python function-call notional machine. An LLM interviewer (a ReAct loop in LangGraph) chooses probes through constrained tools. The application keeps an exact Bayesian belief over all 256 possible profiles, and a second LLM interprets the student’s free-text explanations.</p>
+<p><strong>Refinement.</strong> The HW-11 baseline showed that the interpreter discarded students’ admissions of careless errors. This week’s refinement has two parts:</p>
+<ul>
+<li><strong>D34:</strong> the interpreter counts an admitted careless error as evidence.</li>
+<li><strong>D38:</strong> a follow-up correction found by failure analysis of D34.</li>
+</ul>
+<p>On the same 100 simulated students with the live interpreter, the refined agent reached <strong>91% exact profile match, up from 85%</strong>. Six students improved and none got worse, and certain-but-wrong diagnoses fell from 5 to 4. With the full LLM interviewer, exact match rose from 84% to 89%.</p>
+<p><strong>Evaluation.</strong> A pre-registered protocol defined eight matched comparisons on 12 to 500 simulated students per configuration, with seven retained cases. The refined agent meets the protocol’s provisional criteria for use within a defined scope (a research tool or a supervised pilot). <strong>No real students have been tested</strong>, and that limits every conclusion.</p>
+</section>
+
+<section>
+<h2>2. Commands</h2>
+<p>Python 3.12 and <code>uv</code>. Live runs need the course gateway, with its key in <code>.env</code>, which is not in the repository. The tests, the offline runs and the analysis need neither.</p>
+<pre>uv sync
+uv run pytest                                   # 191 offline tests (scripted fake model)
+bash scripts/overnight_eval.sh                  # night 1: offline C1, C2, C6; R6; C3 baseline and D34 runs
+bash scripts/evening_eval.sh                    # night 2: D38 runs; C3, C4, C5 through scripts/paced_run.py
+uv run python scripts/check_students.py --model Gemma-4-26B-A4B --explain       # LLM-student fidelity check
+uv run python -m mm_agent.run --deciders interviewer --interviewer-model Qwen3.8-Flash-Next --interpreter llm \
+    --student llm --student-model Gemma-4-26B-A4B --student-style mixed --students 20 \
+    --skip-planted A2_REVERSED F5_RUNS_AFTER_RETURN --seed 7 --out runs/eval-llmstudents-faithful            # C7
+uv run python scripts/analyze_eval.py           # every table below -> docs/evaluation-results.md</pre>
+<p>Each run folder keeps one JSONL trace per session, plus <code>summary.md</code> and a <code>manifest.json</code> recording the command, commit, configuration and models. The baseline runs execute commit <code>3a00ed7</code> from a separate git worktree.</p>
+<p>The course key is capped at $2 of spending per hour. <code>scripts/paced_run.py</code> therefore discards any session that hits the cap, waits 10 minutes, and reruns that session from a fresh copy of the student. Seven such waits occurred, and no session was lost.</p>
+</section>
+
+<section>
+<h2>3. Implemented Refinement</h2>
+<h3>3.1 Evidence from the HW-11 baseline and the first change (D34)</h3>
+<p>In the HW-11 baseline, the only certain-but-wrong diagnosis was sim-007. The cause was the live interpreter, which marked 10 of 11 careless-error explanations (“I put the lines in the wrong order by mistake”) as non-informative. They were discarded, so a slip that landed on a misconception’s answer was never counted against that misconception.</p>
+<p><strong>D34 change:</strong> the interpreter prompt now treats an admitted careless error as informative with no misconception. <strong>Prediction:</strong> fewer certain-but-wrong diagnoses for students who slip.</p>
+<h3>3.2 Failure analysis of D34 and the second change (D38)</h3>
+<p>The protocol tested D34 first in isolation: the code decider with the live interpreter, on the same 100 students. The change fixed its mechanism, with careless-error explanations judged correctly in 65 of 66 cases, up from 4 of 76. Exact match held at 85%. But certain-but-wrong diagnoses rose from 5 to 11, which failed the protocol’s acceptance rule.</p>
+<p>Following the lecture’s failure-analysis workflow, six of the seven new cases shared one pattern:</p>
+<ol>
+<li>The student holds a misconception.</li>
+<li>They slip <em>away</em> from its predicted answer and give an unexpected answer.</li>
+<li>They admit the slip.</li>
+<li>The scoring rule (D27) counts an explanation after an unexpected answer against every misconception the probe tests, so the admission became evidence that the student holds none.</li>
+</ol>
+<p><strong>D38 change:</strong> after an unexpected answer, an explanation with no misconception labels does not update the belief. After an answer that matched a misconception’s key, it still counts against that misconception, as D34 intended. Offline on 500 students, exact match rose from 75% to 80%, and certain-but-wrong diagnoses fell from 96 to 65. D38 was decided after seeing the C3 data, and the protocol records it as a post-hoc change.</p>
+<table>
+<caption>Table 1. The refinement on the same 100 students (C3: code decider, live Qwen interpreter).</caption>
+<thead><tr><th scope="col">Configuration</th><th scope="col" class="num">Exact match ↑</th><th scope="col" class="num">Certain but wrong ↓</th><th scope="col" class="num">Brier ↓</th><th scope="col" class="num">Careless-error explanations judged right ↑</th><th scope="col" class="num">Other explanations judged right</th></tr></thead>
+<tbody>
+<tr><th scope="row">Baseline (<code>3a00ed7</code>)</th><td class="num">85%</td><td class="num">5</td><td class="num">0.017</td><td class="num">4 / 76</td><td class="num">202 / 202</td></tr>
+<tr><th scope="row">D34 only</th><td class="num">85%</td><td class="num">11</td><td class="num">0.017</td><td class="num">65 / 66</td><td class="num">193 / 193</td></tr>
+<tr><th scope="row">D34 + D38 (refined)</th><td class="num"><strong>91%</strong></td><td class="num"><strong>4</strong></td><td class="num"><strong>0.010</strong></td><td class="num">70 / 72</td><td class="num">200 / 200</td></tr>
+</tbody>
+</table>
+<p><strong>Paired outcome, baseline vs. refined:</strong> both succeed for 85 students, only the refined agent for 6, only the baseline for 0, and neither for 9.</p>
+<p><strong>Acceptance (protocol §5):</strong> certain-but-wrong did not rise (5 → 4), exact match did not fall (+6 students), and the mechanism check rose. <strong>The refinement is accepted.</strong></p>
+<p><strong>In the full agent (C4: Qwen interviewer, same 100 students):</strong> exact match went from 84% to 89%, and certain-but-wrong from 7 to 4. The paired outcome was 82 both, 7 refined only, 2 baseline only, and 9 neither. The interviewer’s run-to-run variation (§6.4) makes this comparison noisier than C3.</p>
+</section>
+
+<section>
+<h2>4. Evaluation Design</h2>
+<p>The protocol (<code>docs/evaluation-protocol.md</code>) was committed before any results. It fixes the success criteria, the comparisons, the measures, the decision rules and the rules for choosing retained cases. Every later change is dated in its change table, with its reason.</p>
+<ul>
+<li><strong>Task and environment.</strong> Simulated students with a planted profile; each misconception is planted independently with probability 0.2, using seed 7, so student <code>sim-NNN</code> is identical in every configuration.
+<ul>
+<li><em>Bank students</em> answer from the answer keys with a 15% slip rate, give confidence ratings, give vague or hedged answers 15% of the time, and explain from a labeled bank of 94 explanations.</li>
+<li><em>LLM students</em> are Gemma playing a planted profile with a beginner persona and a style (clear, terse or hedging).</li>
+</ul></li>
+<li><strong>Success</strong> (per session): the session ends <code>DIAGNOSED</code> or <code>BUDGET</code>, and its reported profile (misconceptions with probability &gt; 0.5) equals the planted profile exactly.</li>
+<li><strong>Mandatory requirement:</strong> no certainty on a wrong answer. <em>Certain but wrong</em> is a session that ends <code>DIAGNOSED</code> with a wrong profile. It is reported beside every success rate and is never offset by it.</li>
+<li><strong>Unsupported input</strong> succeeds when it ends with an explicit <code>ERROR</code> and a retained trace.</li>
+</ul>
+<table>
+<caption>Table 2. Measures (↑ higher is better, ↓ lower is better).</caption>
+<thead><tr><th scope="col">Measure</th><th scope="col">Definition</th></tr></thead>
+<tbody>
+<tr><th scope="row">Exact match ↑</th><td>Successful sessions / evaluated sessions (errors included)</td></tr>
+<tr><th scope="row">Certain but wrong ↓</th><td>Sessions ending DIAGNOSED with a wrong profile</td></tr>
+<tr><th scope="row">Brier score ↓</th><td>Mean over sessions and misconceptions of (probability − planted 0/1)²</td></tr>
+<tr><th scope="row">Calibration error ↓</th><td>Count-weighted mean of |mean probability − observed share planted| over six probability bins</td></tr>
+<tr><th scope="row">Paired outcome</th><td>Per student: both succeed / only one configuration succeeds / neither</td></tr>
+<tr><th scope="row">Pass-to-fail rate ↓</th><td>Students who succeed on the original input and fail on the variant, divided by the original’s successes</td></tr>
+<tr><th scope="row">Cost ↓</th><td>Model calls per session; model seconds per session (median, 95th percentile); model calls per success</td></tr>
+<tr><th scope="row">Reliability</th><td>ERROR and rejected calls; reproducibility as agreement between reruns of the same configuration</td></tr>
+</tbody>
+</table>
+<p><strong>Comparisons</strong> (same students, budget, stopping rule and scoring in each):</p>
+<ul>
+<li><strong>C1:</strong> adaptive vs. fixed quiz.</li>
+<li><strong>C2:</strong> with vs. without student confidence ratings.</li>
+<li><strong>C3:</strong> the refinement in isolation.</li>
+<li><strong>C4:</strong> the refinement in the full agent.</li>
+<li><strong>C5:</strong> interviewer model.</li>
+<li><strong>C6:</strong> robustness to vague answers.</li>
+<li><strong>C7:</strong> LLM students vs. bank students.</li>
+<li><strong>C8:</strong> reproducibility.</li>
+</ul>
+<p><strong>Protocol changes, all logged before the affected data</strong> except D38, which is marked post hoc:</p>
+<ul>
+<li>One revision round for the LLM-student personas.</li>
+<li>C7 limited to profiles the simulator can play.</li>
+<li>Night-1 interviewer runs repeated after the budget cap cut them off.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. Results</h2>
+<table>
+<caption>Table 3. Quality by comparison. Students are bank students unless stated; offline runs use an oracle interpreter.</caption>
+<thead><tr><th scope="col">Comparison</th><th scope="col">Configuration</th><th scope="col" class="num">n</th><th scope="col" class="num">Exact ↑</th><th scope="col" class="num">Certain but wrong ↓</th><th scope="col" class="num">Brier ↓</th><th scope="col" class="num">Probes</th></tr></thead>
+<tbody>
+<tr><th scope="row" rowspan="4">C1 adaptive vs. fixed (offline)</th><td>Fixed order</td><td class="num">500</td><td class="num">57%</td><td class="num">0</td><td class="num">0.051</td><td class="num">10.0</td></tr>
+<tr><td>Shuffled order</td><td class="num">500</td><td class="num">63%</td><td class="num">4</td><td class="num">0.046</td><td class="num">9.9</td></tr>
+<tr><td>Information gain</td><td class="num">500</td><td class="num">76%</td><td class="num">54</td><td class="num">0.027</td><td class="num">8.6</td></tr>
+<tr><td>Information gain + explanations (refined)</td><td class="num">500</td><td class="num">80%</td><td class="num">65</td><td class="num">0.025</td><td class="num">8.3</td></tr>
+<tr><th scope="row" rowspan="2">C2 confidence ratings (offline, refined)</th><td>With ratings</td><td class="num">500</td><td class="num">80%</td><td class="num">65</td><td class="num">0.025</td><td class="num">8.3</td></tr>
+<tr><td>Without ratings</td><td class="num">500</td><td class="num">76%</td><td class="num">62</td><td class="num">0.030</td><td class="num">8.6</td></tr>
+<tr><th scope="row" rowspan="4">C5 interviewer model (refined)</th><td>Qwen, first 50</td><td class="num">50</td><td class="num">88%</td><td class="num">1</td><td class="num">0.011</td><td class="num">8.3</td></tr>
+<tr><td>Gemma, first 50</td><td class="num">50</td><td class="num">80%</td><td class="num">4</td><td class="num">0.020</td><td class="num">8.2</td></tr>
+<tr><td>Qwen, all 100</td><td class="num">100</td><td class="num">89%</td><td class="num">4</td><td class="num">0.014</td><td class="num">8.2</td></tr>
+<tr><td>Gemma, all 100</td><td class="num">100</td><td class="num">86%</td><td class="num">6</td><td class="num">0.015</td><td class="num">8.2</td></tr>
+<tr><th scope="row" rowspan="2">C7 own-words students (12 profiles)</th><td>LLM students (Gemma), Qwen interviewer</td><td class="num">12</td><td class="num">100%</td><td class="num">0</td><td class="num">0.000</td><td class="num">7.0</td></tr>
+<tr><td>Bank students, same profiles</td><td class="num">12</td><td class="num">100%</td><td class="num">0</td><td class="num">0.003</td><td class="num">7.8</td></tr>
+</tbody>
+</table>
+<ul>
+<li><strong>C1.</strong> Adaptive probing beats a fixed quiz under the same 10-probe budget: 138 students were diagnosed exactly only by information gain, against 40 only by the fixed order. The fixed quiz is never certain-but-wrong only because it is never certain; every fixed-order session ends at the budget.</li>
+<li><strong>C2.</strong> Student confidence ratings add about 4–6 points of exact match. Without them, sessions reach certainty less often (72% vs. 81%).</li>
+<li><strong>C5.</strong> By the protocol’s rule (more than 3 students apart on the first 50), <strong>Qwen is chosen as the interviewer</strong>. Gemma is about 2.4 times faster per session (median model seconds) but had 25 rejected tool calls.</li>
+<li><strong>C6.</strong> Vague and hedged answers cost information gain alone 5 points (81% → 76%). With explanations the pooled rate is unchanged (80% vs. 80%), but 16% of students who succeed without vague answers fail with them, and others go the other way.</li>
+<li><strong>C7.</strong> The protocol’s LLM-student gate passed: 76% of belief answers were in character, with 24% leaking the correct answer. The run was limited to the 12 of 20 profiles without A2 or F5, because the simulator could not act out those two beliefs.</li>
+</ul>
+
+<h3>5.1 Calibration of agent certainty and subgroups</h3>
+<p>For the refined agent with the Qwen interviewer, the 800 probabilities (100 students × 8 misconceptions) are well calibrated, with a calibration error of 0.007:</p>
+<ul>
+<li>Of 154 probabilities averaging 98%, 100% were truly planted.</li>
+<li>Of 611 averaging 0.9%, 1.0% were planted.</li>
+<li>The middle bins are small (2–22 probabilities each) and slightly overconfident; for example, 9 at 86% were 78% planted.</li>
+</ul>
+<p>Offline (4,000 probabilities), the calibration error is 0.009. Exact match by number of planted misconceptions (refined agent, Qwen, 100 students):</p>
+<ul>
+<li>none: 15/16;</li>
+<li>one: 30/30;</li>
+<li>two: 22/28;</li>
+<li>three or more: 22/26.</li>
+</ul>
+<p>Students with several misconceptions are the harder group, as the offline 500 also show (76% and 75%).</p>
+
+<h3>5.2 Cost and reliability</h3>
+<table>
+<caption>Table 4. Cost per session (100 students each, failures included).</caption>
+<thead><tr><th scope="col">Configuration</th><th scope="col" class="num">Model calls</th><th scope="col" class="num">Median model s</th><th scope="col" class="num">95th pct model s</th><th scope="col" class="num">Calls per success ↓</th><th scope="col" class="num">Cached prompt ↑</th><th scope="col" class="num">Rejected calls</th><th scope="col" class="num">ERROR</th></tr></thead>
+<tbody>
+<tr><th scope="row">Baseline, Qwen</th><td class="num">18.3</td><td class="num">43.7</td><td class="num">74.4</td><td class="num">21.8</td><td class="num">80%</td><td class="num">3</td><td class="num">0</td></tr>
+<tr><th scope="row">Refined, Qwen</th><td class="num">18.2</td><td class="num">40.3</td><td class="num">71.0</td><td class="num">20.5</td><td class="num">83%</td><td class="num">4</td><td class="num">0</td></tr>
+<tr><th scope="row">Refined, Gemma</th><td class="num">20.4</td><td class="num">16.7</td><td class="num">23.6</td><td class="num">23.8</td><td class="num">81%</td><td class="num">25</td><td class="num">0</td></tr>
+</tbody>
+</table>
+<p>Interviewer calls only; the interpreter adds about 3 calls per session. <strong>Reproducibility (C8):</strong> rerunning the baseline Qwen agent on the same students gave the same success status for 19 of the 20 HW-11 students and 32 of 33 night-1 students, and the same reported profile for 18 of 20 and 32 of 33. So run-to-run variation is about one student in twenty to thirty. Differences of one or two students between configurations should not be over-read.</p>
+</section>
+
+<section>
+<h2>6. Representative Examples</h2>
+<p>Cases are chosen by the protocol’s fixed rules (§6 of the protocol), not by hand. Belief values below are the probabilities for A1, A2, A3, F1, F2, F3, F4, F5.</p>
+<h3>6.1 Success: three misconceptions (R1, refined Qwen, sim-000)</h3>
+<pre>planted {A2_REVERSED, F1_RETURN_IS_PRINT, F4_LOCALS_OUTLIVE_CALL}
+ask P01 "7 3" conf 3 -> A2   reason: "Highest expected gain; separates linked-assignment from reversed..."
+  explanation "b = a puts b's value into a ..."            -> interpreter [A2]
+ask P05 "3 | 3" conf 5 -> F1; explanation "f puts out the 3, so y should be 3 too" -> [F1]
+ask P07 "5", P08 "start" (correct)                         -> F2, F3 ruled out
+ask P10 "42" conf 4 -> F4; explanation "... should still be 42 afterwards"   -> [F4]
+ask P12 "something unexpected, not sure" conf 1; explanation "that was a guess honestly." -> not informative
+ask P13 "pos" (correct)  reason: "The previous return probe drew only a guess, so this alternate probe retests..."
+ask P14 "[1]" (correct)  -> DIAGNOSED {A2, F1, F4}   exact; 8 probes, 18 model calls, 50 s</pre>
+<h3>6.2 Success: an LLM student in its own words (R7, C7, sim-001, hedging style)</h3>
+<pre>planted {A1, A3, F1, F4}
+ask P01 "7 7" conf 2; "I think because b = a ties the names together ..."        -> [A1]
+ask P03 "[1, 2]" conf 2; "I think ... it makes a brand new copy of the list ..."   -> [A3]
+ask P05 "3\n3" conf 2; "... since print and return do the same thing ..."         -> [F1]
+ask P07 "5" conf 2; "... it's just a local copy, so changing it inside ..."      -> no misconception
+ask P10 "42" conf 2; "variables made inside a function stay around ..."         -> [F4]
+-> DIAGNOSED {A1, A3, F1, F4}   exact; 7 probes</pre>
+<h3>6.3 Changed by the refinement (R3, C3, sim-007, the HW-11 failure)</h3>
+<pre>planted {A1}
+baseline: P05 "3 | 3" conf 3 (slip onto F1); "I lost track of which line printed what." -> NOT informative
+          P06 "8 | done" conf 1 (slip onto F1); "... guessed the output."               -> not informative
+          -> DIAGNOSED {A1, F1}  certain but wrong (F1 0.94)
+refined:  P05 same slip; same explanation -> informative, counts against F1 (F1 ends at 0.04)
+          P12 "after | 2" conf 1 (slip onto F5); "I put the lines in the wrong order by mistake." -> against F5
+          -> DIAGNOSED {A1}  exact (F5 0.13)</pre>
+<h3>6.4 Unsuccessful: certain but wrong (R4, refined Qwen, sim-021)</h3>
+<pre>planted {} (no misconceptions)
+ask P10 "42" conf 2 (slip onto F4); "I didn't notice which variable was printed." -> counted against F4
+ask P11 "4 3" conf 3 (second slip onto F4); "not really sure, sorry." -> not informative
+  reason: "re-tests post-call variable lifetime since the last answer was attributed to inattention"
+-> DIAGNOSED {F4}  wrong: F4 = 0.85, exactly at the certainty threshold</pre>
+<p>The interviewer reasoned well and re-tested F4 after the admitted slip. But two independent slips onto the same misconception’s answer, the second with moderate confidence, are indistinguishable from the belief under the current slip model and stopping threshold. This is the main remaining failure mode, and the top item of the completion plan (§8).</p>
+<h3>6.5 Limited: budget reached (R5, refined Qwen, sim-006) and unsupported input (R6)</h3>
+<pre>planted {F1, F4}: P03 "maybe error?" conf 1 (slip), P14 "I think something unexpected" conf 2 ...
+  submit_diagnosis REJECTED: "Not confident yet: 1 misconceptions are between 0.15 and 0.85 ..."
+  -> BUDGET {F1, F4}  exact, with A3 left at 0.20 (honestly not certain)
+R6: --interviewer-model NoSuchModel -> 403 "model ... not available" -> ERROR / MODEL_ERROR, trace kept</pre>
+</section>
+
+<section>
+<h2>7. Variation, Failures and Limitations</h2>
+<ul>
+<li><strong>Simulated students only.</strong> Bank students answer from the agent’s own answer keys, so their results are an upper bound.
+<ul>
+<li>LLM students reduce this circularity but did not remove it. They were perfectly consistent (no careless errors at all) and could not play A2 or F5.</li>
+<li>No real student has been tested.</li>
+</ul></li>
+<li><strong>Remaining failure modes:</strong>
+<ul>
+<li>repeated careless errors onto the same misconception’s answer (R4);</li>
+<li>students with several misconceptions (75–85% exact);</li>
+<li>vague answers, which change individual outcomes in both directions (pass-to-fail 16–21%).</li>
+</ul></li>
+<li><strong>Variation.</strong> Each live configuration ran once. Reruns disagree on about one student in twenty to thirty (C8), so the C4 and C5 differences of a few students are near this level. The C3 result (6 gained, 0 lost on paired students, with a code decider) is the most reliable comparison.</li>
+<li><strong>Scope.</strong> Eight catalog misconceptions, 15 probes, a 10-probe budget, two course models, one notional machine.
+<ul>
+<li>The agent cannot diagnose a misconception outside the catalog.</li>
+<li>The answer keys allow one form of each wrong answer, while LLM students sometimes expressed F5 in other forms.</li>
+</ul></li>
+<li><strong>Process.</strong> D38 was decided after seeing the C3 data. It was then re-evaluated on the same students, and the protocol marks it post hoc. The $2-per-hour key cap shaped run sizes and required the paced harness.</li>
+</ul>
+</section>
+
+<section>
+<h2>8. Provisional Recommendation and Final-Completion Plan</h2>
+<table>
+<caption>Table 5. Evidence for each possible recommendation (criteria fixed in the protocol, §8).</caption>
+<thead><tr><th scope="col">Recommendation</th><th scope="col">Criterion</th><th scope="col">Current evidence</th></tr></thead>
+<tbody>
+<tr><th scope="row">Use within a defined scope (research tool or supervised pilot)</th><td>Exact ≥ 85% and certain-but-wrong ≤ 5% on bank students; no ERROR on supported inputs; LLM-student gap ≤ 15 points</td><td><strong>Met</strong> for the refined agent with Qwen: 89%, 4%, 0 errors in 300 interviewer sessions, no gap (12/12 vs. 12/12)</td></tr>
+<tr><th scope="row">Revise before use</th><td>Bank criteria met but gap &gt; 15 points or certain-but-wrong &gt; 5%; or LLM-student fidelity gate failed</td><td>Not triggered. The baseline agent would fall here (certain-but-wrong 7%)</td></tr>
+<tr><th scope="row">Do not use for the intended purpose</th><td>On LLM students, no better than the fixed quiz</td><td>Not triggered (100% vs. 57% for the fixed quiz on bank students)</td></tr>
+</tbody>
+</table>
+<p><strong>Provisional assessment:</strong> use within a defined scope, as a research tool on simulated students and as the basis for a supervised pilot. It is not ready to drive lessons for real students. That needs real-student evidence, which is senior-project work. The final recommendation belongs in HW-13.</p>
+<p><strong>Remaining work before December 3</strong>, prioritized by this evidence:</p>
+<ol>
+<li><strong>Repeated-slip guard (optional, evidence: R4).</strong> Test offline whether requiring at least one answer with confidence ≥ 4 or one informative explanation before declaring a misconception present reduces certain-but-wrong without lowering exact match. Adopt it only if the same protocol confirms it on the C3 students.</li>
+<li><strong>Small fixes:</strong> record the interviewer model in each session’s trace header (the manifest already does), and report interpreter time separately.</li>
+<li><strong>Documentation:</strong> the final report (HW-13), the 4-minute presentation and the final recommendation.</li>
+<li><strong>Deferred to the senior project,</strong> because they would invalidate this week’s comparisons:
+<ul>
+<li>a catalog organized by rule (96 profiles);</li>
+<li>generated answer keys with several answer forms;</li>
+<li>new probes from the beginner-question research;</li>
+<li>the RISC-V notional machine;</li>
+<li>a real-student pilot with ethics review.</li>
+</ul></li>
+</ol>
+</section>
+
+<section>
+<h2>9. AI-Assistance Disclosure</h2>
+<ul>
+<li><strong>Claude (Anthropic, Claude app; model <code>claude-opus-5-5</code>).</strong>
+<p>What it did:</p>
+<ul>
+<li>drafted the evaluation protocol;</li>
+<li>implemented D34–D38, the student simulator changes, the paced harness and the analysis script;</li>
+<li>analyzed the traces, including the failure analysis behind D38;</li>
+<li>drafted this report.</li>
+</ul>
+<p>How I verified it:</p>
+<ul>
+<li>I made and recorded each decision (D34–D38, the C7 scope, the protocol changes).</li>
+<li>I ran every live command myself against the course gateway.</li>
+<li>I ran the test suite.</li>
+<li>I checked this report against <code>docs/evaluation-results.md</code> and the retained traces.</li>
+</ul>
+</li>
+</ul>
+</section>
+</main>
+</body>
+</html>

@@ -1,0 +1,39 @@
+[23:45:01] git: revised tree at f8cbd4f (uncommitted files: 0)
+[23:45:01] START eval-offline-500-noconf-d38
+eig_explain: exact 0.76, Brier 0.030, mean probes 8.6
+
+Traces and summary written to /Users/suzanneszabo/Desktop/Suzanne/Fall2026/AI/final_project/runs/eval-offline-500-noconf-d38/
+[23:45:58] DONE  eval-offline-500-noconf-d38
+[23:45:58] START eval-offline-500-novague-d38
+eig_explain: exact 0.80, Brier 0.024, mean probes 8.4
+
+Traces and summary written to /Users/suzanneszabo/Desktop/Suzanne/Fall2026/AI/final_project/runs/eval-offline-500-novague-d38/
+[23:46:55] DONE  eval-offline-500-novague-d38
+[23:46:55] START eval-d38-eigexplain-llm-100
+eig_explain: exact 0.91, Brier 0.010, mean probes 8.1
+
+Traces and summary written to /Users/suzanneszabo/Desktop/Suzanne/Fall2026/AI/final_project/runs/eval-d38-eigexplain-llm-100/
+[23:55:26] DONE  eval-d38-eigexplain-llm-100
+[23:55:26] START eval-baseline-qwen-100-paced
+[paced_run] budget cap reached: {'time': '2026-11-17T00:37:20', 'student': 'sim-053', 'attempt': 1, 'wait_seconds': 600}
+[paced_run] budget cap reached: {'time': '2026-11-17T00:58:40', 'student': 'sim-066', 'attempt': 1, 'wait_seconds': 600}
+interviewer: exact 0.84, Brier 0.017, mean probes 8.3
+
+Traces and summary written to /Users/suzanneszabo/Desktop/Suzanne/Fall2026/AI/final_project/runs/eval-baseline-qwen-100-paced/
+[01:42:14] DONE  eval-baseline-qwen-100-paced
+[01:42:14] START eval-d38-qwen-100
+[paced_run] budget cap reached: {'time': '2026-11-17T01:56:54', 'student': 'sim-020', 'attempt': 1, 'wait_seconds': 600}
+[paced_run] budget cap reached: {'time': '2026-11-17T02:07:06', 'student': 'sim-020', 'attempt': 2, 'wait_seconds': 600}
+[paced_run] budget cap reached: {'time': '2026-11-17T03:05:19', 'student': 'sim-078', 'attempt': 1, 'wait_seconds': 600}
+interviewer: exact 0.89, Brier 0.014, mean probes 8.2
+
+Traces and summary written to /Users/suzanneszabo/Desktop/Suzanne/Fall2026/AI/final_project/runs/eval-d38-qwen-100/
+[03:32:32] DONE  eval-d38-qwen-100
+[03:32:32] START eval-d38-gemma-100
+[paced_run] budget cap reached: {'time': '2026-11-17T03:50:17', 'student': 'sim-045', 'attempt': 1, 'wait_seconds': 600}
+[paced_run] budget cap reached: {'time': '2026-11-17T04:00:22', 'student': 'sim-045', 'attempt': 2, 'wait_seconds': 600}
+interviewer: exact 0.86, Brier 0.015, mean probes 8.2
+
+Traces and summary written to /Users/suzanneszabo/Desktop/Suzanne/Fall2026/AI/final_project/runs/eval-d38-gemma-100/
+[04:31:25] DONE  eval-d38-gemma-100
+[04:31:25] ALL DONE

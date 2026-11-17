@@ -1,0 +1,777 @@
+{
+  "C1": {
+    "eig": {
+      "brier": 0.027146971277499998,
+      "budget": 129,
+      "calls_per_success": 0.0,
+      "certain_wrong": 54,
+      "diagnosed": 371,
+      "errors": 0,
+      "exact_rate": 0.764,
+      "mean_calls": 0,
+      "mean_explanations": 0,
+      "mean_probes": 8.562,
+      "median_seconds": 0.0,
+      "n": 500,
+      "p95_seconds": 0.0,
+      "rejections": 0,
+      "success": 382
+    },
+    "eig_explain_d34": {
+      "brier": 0.03070233604,
+      "budget": 62,
+      "calls_per_success": 0.0,
+      "certain_wrong": 96,
+      "diagnosed": 438,
+      "errors": 0,
+      "exact_rate": 0.754,
+      "mean_calls": 0,
+      "mean_explanations": 2.674,
+      "mean_probes": 7.96,
+      "median_seconds": 0.0,
+      "n": 500,
+      "p95_seconds": 0.0,
+      "rejections": 0,
+      "success": 377
+    },
+    "eig_explain_d38": {
+      "brier": 0.0246712183375,
+      "budget": 97,
+      "calls_per_success": 0.0,
+      "certain_wrong": 65,
+      "diagnosed": 403,
+      "errors": 0,
+      "exact_rate": 0.804,
+      "mean_calls": 0,
+      "mean_explanations": 2.76,
+      "mean_probes": 8.332,
+      "median_seconds": 0.0,
+      "n": 500,
+      "p95_seconds": 0.0,
+      "rejections": 0,
+      "success": 402
+    },
+    "fixed": {
+      "brier": 0.05100463291000001,
+      "budget": 500,
+      "calls_per_success": 0.0,
+      "certain_wrong": 0,
+      "diagnosed": 0,
+      "errors": 0,
+      "exact_rate": 0.568,
+      "mean_calls": 0,
+      "mean_explanations": 0,
+      "mean_probes": 10,
+      "median_seconds": 0.0,
+      "n": 500,
+      "p95_seconds": 0.0,
+      "rejections": 0,
+      "success": 284
+    },
+    "shuffled": {
+      "brier": 0.0457237018,
+      "budget": 440,
+      "calls_per_success": 0.0,
+      "certain_wrong": 4,
+      "diagnosed": 60,
+      "errors": 0,
+      "exact_rate": 0.628,
+      "mean_calls": 0,
+      "mean_explanations": 0,
+      "mean_probes": 9.924,
+      "median_seconds": 0.0,
+      "n": 500,
+      "p95_seconds": 0.0,
+      "rejections": 0,
+      "success": 314
+    }
+  },
+  "C1_paired_eig_vs_fixed": {
+    "a only": 40,
+    "b only": 138,
+    "both": 244,
+    "neither": 78,
+    "pairs": 500
+  },
+  "C2": {
+    "eig": {
+      "paired": {
+        "a only": 22,
+        "b only": 52,
+        "both": 330,
+        "neither": 96,
+        "pairs": 500
+      },
+      "with": {
+        "brier": 0.027146971277499998,
+        "budget": 129,
+        "calls_per_success": 0.0,
+        "certain_wrong": 54,
+        "diagnosed": 371,
+        "errors": 0,
+        "exact_rate": 0.764,
+        "mean_calls": 0,
+        "mean_explanations": 0,
+        "mean_probes": 8.562,
+        "median_seconds": 0.0,
+        "n": 500,
+        "p95_seconds": 0.0,
+        "rejections": 0,
+        "success": 382
+      },
+      "without": {
+        "brier": 0.03771385367,
+        "budget": 260,
+        "calls_per_success": 0.0,
+        "certain_wrong": 47,
+        "diagnosed": 240,
+        "errors": 0,
+        "exact_rate": 0.704,
+        "mean_calls": 0,
+        "mean_explanations": 0,
+        "mean_probes": 9.212,
+        "median_seconds": 0.0,
+        "n": 500,
+        "p95_seconds": 0.0,
+        "rejections": 0,
+        "success": 352
+      }
+    },
+    "eig_explain": {
+      "paired": {
+        "a only": 11,
+        "b only": 31,
+        "both": 371,
+        "neither": 87,
+        "pairs": 500
+      },
+      "with": {
+        "brier": 0.0246712183375,
+        "budget": 97,
+        "calls_per_success": 0.0,
+        "certain_wrong": 65,
+        "diagnosed": 403,
+        "errors": 0,
+        "exact_rate": 0.804,
+        "mean_calls": 0,
+        "mean_explanations": 2.76,
+        "mean_probes": 8.332,
+        "median_seconds": 0.0,
+        "n": 500,
+        "p95_seconds": 0.0,
+        "rejections": 0,
+        "success": 402
+      },
+      "without": {
+        "brier": 0.030133305532499998,
+        "budget": 140,
+        "calls_per_success": 0.0,
+        "certain_wrong": 62,
+        "diagnosed": 360,
+        "errors": 0,
+        "exact_rate": 0.764,
+        "mean_calls": 0,
+        "mean_explanations": 2.852,
+        "mean_probes": 8.602,
+        "median_seconds": 0.0,
+        "n": 500,
+        "p95_seconds": 0.0,
+        "rejections": 0,
+        "success": 382
+      }
+    }
+  },
+  "C3": {
+    "baseline": {
+      "brier": 0.0172403704,
+      "budget": 16,
+      "calls_per_success": 0.0,
+      "certain_wrong": 5,
+      "diagnosed": 84,
+      "errors": 0,
+      "exact_rate": 0.85,
+      "mean_calls": 0,
+      "mean_explanations": 2.78,
+      "mean_probes": 8.21,
+      "median_seconds": 0.0,
+      "n": 100,
+      "p95_seconds": 0.0,
+      "rejections": 0,
+      "success": 85
+    },
+    "d34": {
+      "brier": 0.01659807125,
+      "budget": 9,
+      "calls_per_success": 0.0,
+      "certain_wrong": 11,
+      "diagnosed": 91,
+      "errors": 0,
+      "exact_rate": 0.85,
+      "mean_calls": 0,
+      "mean_explanations": 2.59,
+      "mean_probes": 7.73,
+      "median_seconds": 0.0,
+      "n": 100,
+      "p95_seconds": 0.0,
+      "rejections": 0,
+      "success": 85
+    },
+    "d38": {
+      "brier": 0.009724763249999999,
+      "budget": 15,
+      "calls_per_success": 0.0,
+      "certain_wrong": 4,
+      "diagnosed": 85,
+      "errors": 0,
+      "exact_rate": 0.91,
+      "mean_calls": 0,
+      "mean_explanations": 2.72,
+      "mean_probes": 8.13,
+      "median_seconds": 0.0,
+      "n": 100,
+      "p95_seconds": 0.0,
+      "rejections": 0,
+      "success": 91
+    }
+  },
+  "C3_certain_wrong_ids": {
+    "baseline": [
+      "sim-007",
+      "sim-042",
+      "sim-050",
+      "sim-056",
+      "sim-081"
+    ],
+    "d34": [
+      "sim-016",
+      "sim-020",
+      "sim-028",
+      "sim-041",
+      "sim-042",
+      "sim-050",
+      "sim-056",
+      "sim-064",
+      "sim-073",
+      "sim-081",
+      "sim-094"
+    ],
+    "d38": [
+      "sim-028",
+      "sim-042",
+      "sim-050",
+      "sim-081"
+    ]
+  },
+  "C3_mechanism": {
+    "baseline": {
+      "misconception": {
+        "right": 142,
+        "total": 142
+      },
+      "none": {
+        "right": 60,
+        "total": 60
+      },
+      "slip": {
+        "right": 4,
+        "total": 76
+      }
+    },
+    "d34": {
+      "misconception": {
+        "right": 137,
+        "total": 137
+      },
+      "none": {
+        "right": 56,
+        "total": 56
+      },
+      "slip": {
+        "right": 65,
+        "total": 66
+      }
+    },
+    "d38": {
+      "misconception": {
+        "right": 142,
+        "total": 142
+      },
+      "none": {
+        "right": 58,
+        "total": 58
+      },
+      "slip": {
+        "right": 70,
+        "total": 72
+      }
+    }
+  },
+  "C3_paired_baseline_vs_d34": {
+    "a only": 7,
+    "b only": 7,
+    "both": 78,
+    "neither": 8,
+    "pairs": 100
+  },
+  "C3_paired_baseline_vs_d38": {
+    "a only": 0,
+    "b only": 6,
+    "both": 85,
+    "neither": 9,
+    "pairs": 100
+  },
+  "C4": {
+    "baseline_qwen": {
+      "brier": 0.016989676125,
+      "budget": 17,
+      "calls_per_success": 21.80952380952381,
+      "certain_wrong": 7,
+      "diagnosed": 83,
+      "errors": 0,
+      "exact_rate": 0.84,
+      "mean_calls": 18.32,
+      "mean_explanations": 3.21,
+      "mean_probes": 8.26,
+      "median_seconds": 43.69,
+      "n": 100,
+      "p95_seconds": 74.41275,
+      "rejections": 3,
+      "success": 84
+    },
+    "d38_qwen": {
+      "brier": 0.013546587887500001,
+      "budget": 18,
+      "calls_per_success": 20.48314606741573,
+      "certain_wrong": 4,
+      "diagnosed": 82,
+      "errors": 0,
+      "exact_rate": 0.89,
+      "mean_calls": 18.23,
+      "mean_explanations": 3.22,
+      "mean_probes": 8.21,
+      "median_seconds": 40.2515,
+      "n": 100,
+      "p95_seconds": 70.99399999999999,
+      "rejections": 4,
+      "success": 89
+    },
+    "mechanism": {
+      "baseline": {
+        "correct": {
+          "right": 45,
+          "total": 45
+        },
+        "misconception": {
+          "right": 123,
+          "total": 123
+        },
+        "none": {
+          "right": 75,
+          "total": 75
+        },
+        "slip": {
+          "right": 7,
+          "total": 78
+        }
+      },
+      "d38": {
+        "correct": {
+          "right": 47,
+          "total": 47
+        },
+        "misconception": {
+          "right": 125,
+          "total": 125
+        },
+        "none": {
+          "right": 72,
+          "total": 72
+        },
+        "slip": {
+          "right": 76,
+          "total": 78
+        }
+      }
+    },
+    "paired": {
+      "a only": 2,
+      "b only": 7,
+      "both": 82,
+      "neither": 9,
+      "pairs": 100
+    }
+  },
+  "C5": {
+    "gemma_100": {
+      "brier": 0.0153315612125,
+      "budget": 16,
+      "calls_per_success": 23.77906976744186,
+      "certain_wrong": 6,
+      "diagnosed": 84,
+      "errors": 0,
+      "exact_rate": 0.86,
+      "mean_calls": 20.45,
+      "mean_explanations": 2.96,
+      "mean_probes": 8.16,
+      "median_seconds": 16.726,
+      "n": 100,
+      "p95_seconds": 23.5574,
+      "rejections": 25,
+      "success": 86
+    },
+    "gemma_first50": {
+      "brier": 0.02045122545,
+      "budget": 8,
+      "calls_per_success": 25.825,
+      "certain_wrong": 4,
+      "diagnosed": 42,
+      "errors": 0,
+      "exact_rate": 0.8,
+      "mean_calls": 20.66,
+      "mean_explanations": 3.02,
+      "mean_probes": 8.22,
+      "median_seconds": 16.7755,
+      "n": 50,
+      "p95_seconds": 24.48685,
+      "rejections": 14,
+      "success": 40
+    },
+    "paired_100_qwen_vs_gemma": {
+      "a only": 4,
+      "b only": 1,
+      "both": 85,
+      "neither": 10,
+      "pairs": 100
+    },
+    "paired_first50_qwen_vs_gemma": {
+      "a only": 4,
+      "b only": 0,
+      "both": 40,
+      "neither": 6,
+      "pairs": 50
+    },
+    "qwen_100": {
+      "brier": 0.013546587887500001,
+      "budget": 18,
+      "calls_per_success": 20.48314606741573,
+      "certain_wrong": 4,
+      "diagnosed": 82,
+      "errors": 0,
+      "exact_rate": 0.89,
+      "mean_calls": 18.23,
+      "mean_explanations": 3.22,
+      "mean_probes": 8.21,
+      "median_seconds": 40.2515,
+      "n": 100,
+      "p95_seconds": 70.99399999999999,
+      "rejections": 4,
+      "success": 89
+    },
+    "qwen_first50": {
+      "brier": 0.011310687775,
+      "budget": 9,
+      "calls_per_success": 20.818181818181817,
+      "certain_wrong": 1,
+      "diagnosed": 41,
+      "errors": 0,
+      "exact_rate": 0.88,
+      "mean_calls": 18.32,
+      "mean_explanations": 3.22,
+      "mean_probes": 8.28,
+      "median_seconds": 44.214,
+      "n": 50,
+      "p95_seconds": 77.33545,
+      "rejections": 3,
+      "success": 44
+    }
+  },
+  "C6": {
+    "eig": {
+      "original_no_vague": {
+        "brier": 0.023087665809999998,
+        "budget": 96,
+        "calls_per_success": 0.0,
+        "certain_wrong": 50,
+        "diagnosed": 404,
+        "errors": 0,
+        "exact_rate": 0.814,
+        "mean_calls": 0,
+        "mean_explanations": 0,
+        "mean_probes": 8.372,
+        "median_seconds": 0.0,
+        "n": 500,
+        "p95_seconds": 0.0,
+        "rejections": 0,
+        "success": 407
+      },
+      "paired": {
+        "a only": 87,
+        "b only": 62,
+        "both": 320,
+        "neither": 31,
+        "pairs": 500
+      },
+      "pass_to_fail_rate": 0.21375921375921375,
+      "variant_15pct_vague": {
+        "brier": 0.027146971277499998,
+        "budget": 129,
+        "calls_per_success": 0.0,
+        "certain_wrong": 54,
+        "diagnosed": 371,
+        "errors": 0,
+        "exact_rate": 0.764,
+        "mean_calls": 0,
+        "mean_explanations": 0,
+        "mean_probes": 8.562,
+        "median_seconds": 0.0,
+        "n": 500,
+        "p95_seconds": 0.0,
+        "rejections": 0,
+        "success": 382
+      }
+    },
+    "eig_explain": {
+      "original_no_vague": {
+        "brier": 0.0240668288125,
+        "budget": 97,
+        "calls_per_success": 0.0,
+        "certain_wrong": 62,
+        "diagnosed": 403,
+        "errors": 0,
+        "exact_rate": 0.8,
+        "mean_calls": 0,
+        "mean_explanations": 2.832,
+        "mean_probes": 8.376,
+        "median_seconds": 0.0,
+        "n": 500,
+        "p95_seconds": 0.0,
+        "rejections": 0,
+        "success": 400
+      },
+      "paired": {
+        "a only": 65,
+        "b only": 67,
+        "both": 335,
+        "neither": 33,
+        "pairs": 500
+      },
+      "pass_to_fail_rate": 0.1625,
+      "variant_15pct_vague": {
+        "brier": 0.0246712183375,
+        "budget": 97,
+        "calls_per_success": 0.0,
+        "certain_wrong": 65,
+        "diagnosed": 403,
+        "errors": 0,
+        "exact_rate": 0.804,
+        "mean_calls": 0,
+        "mean_explanations": 2.76,
+        "mean_probes": 8.332,
+        "median_seconds": 0.0,
+        "n": 500,
+        "p95_seconds": 0.0,
+        "rejections": 0,
+        "success": 402
+      }
+    }
+  },
+  "C7": {
+    "bank_same_ids_d38_qwen": {
+      "brier": 0.0027788596875,
+      "budget": 2,
+      "calls_per_success": 17.0,
+      "certain_wrong": 0,
+      "diagnosed": 10,
+      "errors": 0,
+      "exact_rate": 1.0,
+      "mean_calls": 17,
+      "mean_explanations": 2.5,
+      "mean_probes": 7.75,
+      "median_seconds": 22.509999999999998,
+      "n": 12,
+      "p95_seconds": 64.14664999999998,
+      "rejections": 1,
+      "success": 12
+    },
+    "llm_students": {
+      "brier": 0.00020719531249999978,
+      "budget": 0,
+      "calls_per_success": 14.916666666666666,
+      "certain_wrong": 0,
+      "diagnosed": 12,
+      "errors": 0,
+      "exact_rate": 1.0,
+      "mean_calls": 14.916666666666666,
+      "mean_explanations": 2.25,
+      "mean_probes": 7,
+      "median_seconds": 39.665499999999994,
+      "n": 12,
+      "p95_seconds": 122.42934999999997,
+      "rejections": 0,
+      "success": 12
+    },
+    "paired_bank_vs_llm": {
+      "a only": 0,
+      "b only": 0,
+      "both": 12,
+      "neither": 0,
+      "pairs": 12
+    },
+    "unexpected_answers_in_c7": 0
+  },
+  "C8": {
+    "hw11_vs_paced": {
+      "pairs": 20,
+      "same_profile": 18,
+      "same_success_status": 19
+    },
+    "night1_vs_paced": {
+      "pairs": 33,
+      "same_profile": 32,
+      "same_success_status": 32
+    }
+  },
+  "budget_waits": {
+    "eval-baseline-qwen-100-paced": 2,
+    "eval-d38-eigexplain-llm-100": 0,
+    "eval-d38-gemma-100": 2,
+    "eval-d38-qwen-100": 3
+  },
+  "calibration_d38_qwen": {
+    "bins": [
+      {
+        "bin": "[0.0, 0.1]",
+        "mean_prob": 0.009452373158756138,
+        "n": 611,
+        "observed": 0.009819967266775777
+      },
+      {
+        "bin": "[0.1, 0.3]",
+        "mean_prob": 0.17886818181818182,
+        "n": 22,
+        "observed": 0.13636363636363635
+      },
+      {
+        "bin": "[0.3, 0.5]",
+        "mean_prob": 0.384,
+        "n": 2,
+        "observed": 0.0
+      },
+      {
+        "bin": "[0.5, 0.7]",
+        "mean_prob": 0.6244,
+        "n": 2,
+        "observed": 0.5
+      },
+      {
+        "bin": "[0.7, 0.9]",
+        "mean_prob": 0.8640222222222222,
+        "n": 9,
+        "observed": 0.7777777777777778
+      },
+      {
+        "bin": "[0.9, 1.0]",
+        "mean_prob": 0.9813415584415585,
+        "n": 154,
+        "observed": 1.0
+      }
+    ],
+    "calibration_error": 0.007282624999999996
+  },
+  "calibration_offline_eig_explain_d38": {
+    "bins": [
+      {
+        "bin": "[0.0, 0.1]",
+        "mean_prob": 0.012490103492884864,
+        "n": 3092,
+        "observed": 0.017464424320827943
+      },
+      {
+        "bin": "[0.1, 0.3]",
+        "mean_prob": 0.1697677966101695,
+        "n": 118,
+        "observed": 0.16101694915254236
+      },
+      {
+        "bin": "[0.3, 0.5]",
+        "mean_prob": 0.4278611111111111,
+        "n": 18,
+        "observed": 0.5555555555555556
+      },
+      {
+        "bin": "[0.5, 0.7]",
+        "mean_prob": 0.615675,
+        "n": 24,
+        "observed": 0.7916666666666666
+      },
+      {
+        "bin": "[0.7, 0.9]",
+        "mean_prob": 0.8628290322580645,
+        "n": 62,
+        "observed": 0.9354838709677419
+      },
+      {
+        "bin": "[0.9, 1.0]",
+        "mean_prob": 0.9823932944606414,
+        "n": 686,
+        "observed": 0.9708454810495627
+      }
+    ],
+    "calibration_error": 0.008840474999999997
+  },
+  "retained": {
+    "R1": "sim-000",
+    "R2": "sim-005",
+    "R3": "sim-007",
+    "R3_alt_lost": null,
+    "R4": "sim-021",
+    "R5": "sim-006",
+    "R6": "eval-unsupported/interviewer_sim-000",
+    "R7_failure": null,
+    "R7_success": "sim-001"
+  },
+  "subgroups_d38_qwen": {
+    "0": {
+      "n": 16,
+      "rate": 0.9375,
+      "success": 15
+    },
+    "1": {
+      "n": 30,
+      "rate": 1.0,
+      "success": 30
+    },
+    "2": {
+      "n": 28,
+      "rate": 0.7857142857142857,
+      "success": 22
+    },
+    "3+": {
+      "n": 26,
+      "rate": 0.8461538461538461,
+      "success": 22
+    }
+  },
+  "subgroups_offline_eig_explain_d38": {
+    "0": {
+      "n": 84,
+      "rate": 0.8928571428571429,
+      "success": 75
+    },
+    "1": {
+      "n": 159,
+      "rate": 0.8364779874213837,
+      "success": 133
+    },
+    "2": {
+      "n": 139,
+      "rate": 0.7553956834532374,
+      "success": 105
+    },
+    "3+": {
+      "n": 118,
+      "rate": 0.7542372881355932,
+      "success": 89
+    }
+  }
+}

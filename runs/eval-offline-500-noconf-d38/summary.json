@@ -1,0 +1,56 @@
+{
+  "eig_explain": {
+    "brier": 0.030133305532499998,
+    "budget_rate": 0.28,
+    "confident_wrong_rate": 0.124,
+    "diagnosed_rate": 0.72,
+    "error_rate_by_kind": {},
+    "exact_match": 0.764,
+    "mean_explanations": 2.852,
+    "mean_probes": 8.602,
+    "per_misconception": {
+      "A1_LINKED": {
+        "precision": 0.9611650485436893,
+        "recall": 0.908256880733945,
+        "support": 109
+      },
+      "A2_REVERSED": {
+        "precision": 0.9433962264150944,
+        "recall": 0.9523809523809523,
+        "support": 105
+      },
+      "A3_COPY_ON_ASSIGN": {
+        "precision": 0.9770114942528736,
+        "recall": 0.8415841584158416,
+        "support": 101
+      },
+      "F1_RETURN_IS_PRINT": {
+        "precision": 0.9313725490196079,
+        "recall": 0.9595959595959596,
+        "support": 99
+      },
+      "F2_PARAM_LINKED": {
+        "precision": 0.9368421052631579,
+        "recall": 0.8317757009345794,
+        "support": 107
+      },
+      "F3_DEF_RUNS_BODY": {
+        "precision": 0.925531914893617,
+        "recall": 0.8529411764705882,
+        "support": 102
+      },
+      "F4_LOCALS_OUTLIVE_CALL": {
+        "precision": 0.9333333333333333,
+        "recall": 0.8990825688073395,
+        "support": 109
+      },
+      "F5_RUNS_AFTER_RETURN": {
+        "precision": 0.9052631578947369,
+        "recall": 0.9148936170212766,
+        "support": 94
+      }
+    },
+    "sessions": 500,
+    "step_limit_rate": 0.0
+  }
+}
