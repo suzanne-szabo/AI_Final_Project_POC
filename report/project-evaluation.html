@@ -37,7 +37,7 @@
 <div class="byline">
 <p>U0-HW-12: Agent Project Refinement and Evaluation · Suzanne Szabo · Utah Tech University, AI, Fall 2026 · November 19, 2026</p>
 <p>Repository: <a href="https://github.com/suzanne-szabo/AI_Final_Project_POC">https://github.com/suzanne-szabo/AI_Final_Project_POC</a></p>
-<p>Submitted commit: <code>8ff8a81</code>. Evaluated code: <code>f8cbd4f</code> (refined agent) and <code>3a00ed7</code> (HW-11 baseline).</p>
+<p>Submitted commit: <code>SUBMITTED_COMMIT</code>. Evaluated code: <code>f8cbd4f</code> (refined agent) and <code>3a00ed7</code> (HW-11 baseline).</p>
 </div>
 </header>
 
@@ -203,7 +203,20 @@ uv run python scripts/analyze_eval.py           # every table below -> docs/eval
 
 <section>
 <h2>6. Representative Examples</h2>
-<p>Cases are chosen by the protocol’s fixed rules (§6 of the protocol), not by hand. Belief values below are the probabilities for A1, A2, A3, F1, F2, F3, F4, F5.</p>
+<p>Cases are chosen by the protocol’s fixed rules (§6 of the protocol), not by hand. Table 5 gives the outcome and success status of every retained case; the per-student outcomes of all evaluated sessions are in the retained runs and in <code>docs/evaluation-results.md</code>. Belief values below are the probabilities for A1, A2, A3, F1, F2, F3, F4, F5.</p>
+<table>
+<caption>Table 5. Retained cases: outcome and task-specific success status.</caption>
+<thead><tr><th scope="col">Case</th><th scope="col">Kind</th><th scope="col">Trace (<code>runs/</code>)</th><th scope="col">Planted</th><th scope="col">Outcome</th><th scope="col">Success?</th></tr></thead>
+<tbody>
+<tr><th scope="row">R1</th><td>Ordinary, several misconceptions</td><td><code>eval-d38-qwen-100/…sim-000</code></td><td>A2, F1, F4</td><td>DIAGNOSED {A2, F1, F4}; 8 probes, 18 calls</td><td>Yes</td></tr>
+<tr><th scope="row">R2</th><td>Ordinary, no misconceptions</td><td><code>eval-d38-qwen-100/…sim-005</code></td><td>none</td><td>DIAGNOSED {}; 7 probes, 13 calls</td><td>Yes</td></tr>
+<tr><th scope="row">R3</th><td>Changed by the refinement</td><td><code>eval-baseline-eigexplain-llm-100</code> and <code>eval-d38-eigexplain-llm-100</code>, sim-007</td><td>A1</td><td>Baseline: DIAGNOSED {A1, F1} (certain but wrong). Refined: DIAGNOSED {A1}</td><td>Baseline no; refined yes</td></tr>
+<tr><th scope="row">R4</th><td>Unsuccessful: certain but wrong</td><td><code>eval-d38-qwen-100/…sim-021</code></td><td>none</td><td>DIAGNOSED {F4} (F4 = 0.85)</td><td>No</td></tr>
+<tr><th scope="row">R5</th><td>Boundary: budget reached</td><td><code>eval-d38-qwen-100/…sim-006</code></td><td>F1, F4</td><td>BUDGET {F1, F4}; A3 left at 0.20; one early submission rejected</td><td>Yes (not certain)</td></tr>
+<tr><th scope="row">R6</th><td>Unsupported input: unknown model</td><td><code>eval-unsupported/…sim-000</code></td><td>A2, F1, F4</td><td>ERROR / MODEL_ERROR (HTTP 403 recorded), trace kept</td><td>Yes (explicit error, no crash)</td></tr>
+<tr><th scope="row">R7</th><td>LLM student, own words (hedging)</td><td><code>eval-llmstudents-faithful/…sim-001</code></td><td>A1, A3, F1, F4</td><td>DIAGNOSED {A1, A3, F1, F4}; 7 probes. No R7 failure exists: all 12 LLM-student sessions succeeded</td><td>Yes</td></tr>
+</tbody>
+</table>
 <h3>6.1 Success: three misconceptions (R1, refined Qwen, sim-000)</h3>
 <pre>planted {A2_REVERSED, F1_RETURN_IS_PRINT, F4_LOCALS_OUTLIVE_CALL}
 ask P01 "7 3" conf 3 -> A2   reason: "Highest expected gain; separates linked-assignment from reversed..."
@@ -271,7 +284,7 @@ R6: --interviewer-model NoSuchModel -> 403 "model ... not available" -> ERROR / 
 <section>
 <h2>8. Provisional Recommendation and Final-Completion Plan</h2>
 <table>
-<caption>Table 5. Evidence for each possible recommendation (criteria fixed in the protocol, §8).</caption>
+<caption>Table 6. Evidence for each possible recommendation (criteria fixed in the protocol, §8).</caption>
 <thead><tr><th scope="col">Recommendation</th><th scope="col">Criterion</th><th scope="col">Current evidence</th></tr></thead>
 <tbody>
 <tr><th scope="row">Use within a defined scope (research tool or supervised pilot)</th><td>Exact ≥ 85% and certain-but-wrong ≤ 5% on bank students; no ERROR on supported inputs; LLM-student gap ≤ 15 points</td><td><strong>Met</strong> for the refined agent with Qwen: 89%, 4%, 0 errors in 300 interviewer sessions, no gap (12/12 vs. 12/12)</td></tr>
