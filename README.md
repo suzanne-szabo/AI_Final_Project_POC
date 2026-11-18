@@ -9,17 +9,16 @@ the application keeps an exact Bayesian posterior over all 256 subsets and picks
 expected to reduce its uncertainty most. LLM roles (ReAct interviewer, free-text interpreter) are
 constrained: they request typed tool calls, and the application owns the belief state.
 
-## Status (2026-11-03)
+## Status (2026-11-18, after U0-HW-12)
 
 | Part | State |
 |---|---|
-| Misconception catalog, 15 probes with answer keys | Draft for review (`mm_agent/catalog.py`, `mm_agent/probes.py`) |
-| Belief state, information-gain selection, simulated students | Built, tested |
-| Code-only proof of concept with JSONL traces | Built; evidence run in `runs/poc-2026-11-04/` (reproducible on Python 3.10–3.13) |
-| Evidence interpreter (LLM) with cache-stable prompt | Built, tested offline with a scripted model |
-| Model comparison, Qwen vs Gemma | Script ready; must run on the Tailscale network |
-| Week 2: tools, controller, code deciders, LangGraph interviewer, explanation bank, run command | Built, tested offline (specs in `specs/`) |
-| Live interviewer model check, interpreter rerun on clean + vague sets | Scripts ready; must run on the Tailscale network (`docs/week2-live-runs.md`) |
+| Catalog (8 misconceptions), 15 probes, exact Bayesian belief, information-gain selection | Built, tested |
+| LLM interviewer (LangGraph ReAct, four constrained tools, required stated reason) and LLM interpreter | Built, tested offline; evaluated live (Qwen3.8-Flash-Next chosen as interviewer, D29/C5) |
+| Simulated students: bank students, LLM students with beginner personas and styles, fidelity check | Built, tested; LLM students cannot play A2 or F5 (D36, D37) |
+| Refinement D34 + D38 (careless-error explanations) | Accepted under the evaluation protocol: 85% → 91% exact match on the same 100 students |
+| Evaluation (HW-12) | Protocol `docs/evaluation-protocol.md`; results `docs/evaluation-results.md`; report `report/szabo-suzanne-project-evaluation.pdf` |
+| Not built | Lesson engine, student-facing interface, real students, RISC-V (senior project) |
 
 ## Setup
 
@@ -80,6 +79,32 @@ through each model (default `Qwen3.8-Flash-Next` and `Gemma-4-26B-A4B`) and repo
 `runs/` and accept `--summarize DIR` to rebuild a summary without calling a model. `--repeat 2` shows
 whether the prompt prefix is cached.
 
+## Evaluation (U0-HW-12): how to reproduce
+
+The protocol (`docs/evaluation-protocol.md`) defines the success criteria, the eight comparisons C1–C8, every
+measure with its direction, the decision rules and the rules for choosing retained cases. All runs use seed 7,
+so `sim-NNN` is the same student in every configuration. Baseline runs execute commit `3a00ed7` from a git
+worktree that the scripts create at `../final_project_baseline`.
+
+```bash
+bash scripts/overnight_eval.sh     # night 1: offline C1, C2, C6; unsupported input (R6); C3 baseline and D34 runs
+bash scripts/evening_eval.sh       # night 2: D38 offline and live runs; C3, C4, C5 on 100 students each
+uv run python scripts/check_students.py --model Gemma-4-26B-A4B --explain        # LLM-student fidelity check
+uv run python -m mm_agent.run --deciders interviewer --interviewer-model Qwen3.8-Flash-Next --interpreter llm \
+    --student llm --student-model Gemma-4-26B-A4B --student-style mixed --students 20 \
+    --skip-planted A2_REVERSED F5_RUNS_AFTER_RETURN --seed 7 --out runs/eval-llmstudents-faithful    # C7
+uv run python scripts/analyze_eval.py   # offline: every table -> docs/evaluation-results.md, runs/eval-analysis.json
+```
+
+- **Budget cap.** The course key allows $2 of spending per hour. `scripts/paced_run.py` wraps a run: a session that hits
+  the cap is discarded, the script waits 10 minutes, and the session is rerun from a fresh copy of the student
+  (waits are logged in `runs/<run>/budget_waits.jsonl`). Agent code is unchanged.
+- **Times.** The offline runs take minutes. A 100-student Qwen-interviewer run takes about 1 h 50 min including
+  budget waits.
+- **LangSmith.** Turned off for the evaluation runs (free tier used up). The JSONL traces are the evidence.
+- **Retained cases.** R1–R7 (protocol §6) are listed at the end of `docs/evaluation-results.md`. Each is a trace
+  file under `runs/`.
+
 ## Layout
 
 ```
@@ -104,7 +129,13 @@ mm_agent/check_scenarios.py  the eight interviewer-check scenarios
 mm_agent/poc.py         week-1 proof of concept (kept reproducible)
 scripts/compare_models.py    live interpreter comparison
 scripts/check_interviewer.py live interviewer model check
+scripts/check_students.py   LLM-student fidelity check (mm_agent/fidelity.py)
+scripts/overnight_eval.sh, scripts/evening_eval.sh   HW-12 evaluation runs
+scripts/paced_run.py        budget-aware wrapper for live runs
+scripts/analyze_eval.py     HW-12 analysis -> docs/evaluation-results.md
 data/                   explanation bank, clean and vague interpreter test sets
 specs/                  week-2 specifications; tests/ black-box tests
-docs/decisions.md       decision log; docs/implementer-notes.md spec issues found while implementing
+docs/decisions.md       decision log (D1-D38); docs/implementer-notes.md spec issues found while implementing
+docs/evaluation-protocol.md, docs/evaluation-results.md   HW-12 protocol and results
+docs/notional-machine.md, docs/mental-model-representation.md, docs/catalog-sources.md, docs/beginner-sources.md
 ```
